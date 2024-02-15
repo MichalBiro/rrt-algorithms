@@ -18,7 +18,7 @@ class RRT(RRTBase):
         """
         super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, object , obstacle)
 
-    def rrt_search(self,object,obstacle):
+    def rrt_search(self):
         """
         Create and return a Rapidly-exploring Random Tree, keeps expanding until can connect to goal
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
@@ -30,7 +30,7 @@ class RRT(RRTBase):
         while True:
             for q in self.Q:  # iterate over different edge lengths until solution found or time out
                 for i in range(q[1]):  # iterate over number of edges of given length to add
-                    x_new, x_nearest = self.new_and_near(0, q, object, obstacle)
+                    x_new, x_nearest = self.new_and_near(0, q)
 
                     if x_new is None:
                         continue

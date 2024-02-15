@@ -4,6 +4,7 @@ import shapely.geometry
 import shapely.affinity
 import imageio
 
+
 class RotatedRect:
     def __init__(self, cx, cy, w, h, angle):
         self.cx = cx
@@ -15,45 +16,44 @@ class RotatedRect:
     def get_contour(self):
         w = self.w
         h = self.h
-        c = shapely.geometry.box(-w/2.0, -h/2.0, w/2.0, h/2.0)
-        rc = shapely.affinity.rotate(c,360-self.angle)
+        c = shapely.geometry.box(-w / 2.0, -h / 2.0, w / 2.0, h / 2.0)
+        rc = shapely.affinity.rotate(c, 360 - self.angle)
         return shapely.affinity.translate(rc, self.cx, self.cy)
 
     def intersection(self, other):
         return self.get_contour().intersection(other.get_contour())
 
 
-# Create a white image
-img = np.full((300, 600, 3), 255, dtype=np.uint8)
-# Draw a diagonal blue line with thickness of 5 px
-# cv.line(img,(0,0),(20,30),(255,0,0),1)
+# convert rectangle from [center,width,length,angle] to [x1,y1,x2,y2,angle]
+def convert_rectangle(rectangle):
+    center = (rectangle[0], rectangle[1])
+    width = rectangle[2]
+    height = rectangle[3]
+    angle = rectangle[4]
+    rect_pts = (
+        center[0] - width // 2, center[1] - height // 2,
+        center[0] + width // 2, center[1] + height // 2)
+    return rect_pts
 
-#----------------------------------
-# prekazka
-cv.rectangle(img,(250,100),(350,300),(200,255,0),thickness=-1)
-#interpretacia pre prienik
-r1 = RotatedRect(300,200,100,200,0)
 
-#----------------------------------
+# ----------------------------------
 # Pohybujuci sa objekt
-
-def object_visualize(center,width,height,angle,obstacle):
+def object_visualize(center, width, height, angle, obstacle):
     # Define the coordinates of the rectangle
     # center = (300, 300)
     # width = 200
     # height = 100
     # angle = 70
     # interpretacia pre prienik
-    r1= obstacle
-    r2= RotatedRect(center[0],center[1],width,height,angle)
+    r1 = obstacle
+    r2 = RotatedRect(center[0], center[1], width, height, angle)
 
     # prienik 2 objektov - kolizia
     intersection = r1.intersection(r2)
     intersection = np.array(intersection.exterior.coords)
     intersection = intersection.astype(int)
 
-
-    #cv.rectangle(img, (center[0] - width // 2, center[1] - height // 2),(center[0] + width // 2, center[1] + height // 2), color, thickness)
+    # cv.rectangle(img, (center[0] - width // 2, center[1] - height // 2),(center[0] + width // 2, center[1] + height // 2), color, thickness)
 
     # Calculate the rotation matrix
     rotation_matrix = cv.getRotationMatrix2D(center, angle, 1)
@@ -72,19 +72,69 @@ def object_visualize(center,width,height,angle,obstacle):
 
     return rotated_pts, intersection
 
-#--------------------------------
+
+def path_sampling(path):
+    path_visualization = []
+    for j in range(len(path)-1):
+        start = path[j]
+        goal = path[j + 1]
+        path_visualization.append(start)
+        if abs(start[0]-goal[0]) > 20 or abs(start[1]-goal[1]) > 20 or abs(start[2]-goal[2]) > 20:
+
+            samples = 30  # number of position checked between start and goal
+            range_x = abs(start[0] - goal[0])
+            range_y = abs(start[1] - goal[1])
+            range_angle = abs(start[2] - goal[2])
+            increment_x = range_x / samples
+            increment_y = range_y / samples
+            increment_angle = range_angle / samples
+
+            for i in range(1, samples):
+                if start[0] < goal[0]:
+                    x = start[0] + i * increment_x
+                else:
+                    x = start[0] - i * increment_x
+
+                if start[1] < goal[1]:
+                    y = start[1] + i * increment_y
+                else:
+                    y = start[1] - i * increment_y
+
+                if start[2] < goal[2]:
+                    angle = start[2] + i * increment_angle
+                else:
+                    angle = start[2] - i * increment_angle
+
+                position = (x, y, angle)
+                path_visualization.append(position)
+
+    path_visualization.append(path[-1])
+    return path_visualization
+
+
+# Create a white image
+img = np.full((300, 600, 3), 255, dtype=np.uint8)
+# Draw a diagonal blue line with thickness of 5 px
+# cv.line(img,(0,0),(20,30),(255,0,0),1)
+
+# ----------------------------------
+# prekazka
+cv.rectangle(img, (250, 100), (350, 300), (200, 255, 0), thickness=-1)
+# interpretacia pre prienik
+r1 = RotatedRect(300, 200, 100, 200, 0)
+
+# --------------------------------
 # Draw the rotated rectangle
 center = (550, 130)
 width = 20
 height = 100
 angle = 0
-[rotated_pts, intersection] = object_visualize(center,width,height,angle,r1)
+[rotated_pts, intersection] = object_visualize(center, width, height, angle, r1)
 if len(intersection) != 0:
-    print ("EMPTYYYY")
+    print("EMPTY")
 
 # create GIF
 frames = []
-
 
 # for i in range (150):
 #     if (i<50):
@@ -107,7 +157,7 @@ frames = []
 #     cv.imshow("image",img)
 #     frames.append(img)
 #     cv.waitKey()
-    
+
 
 #     #reset image
 #     img = np.full((300, 600, 3), 255, dtype=np.uint8)
@@ -120,4 +170,3 @@ frames = []
 #         print("Adding frame to GIF file")
 #         rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 #         writer.append_data(rgb_frame)
-

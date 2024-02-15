@@ -10,39 +10,43 @@ from src.rrt.rrt import RRT
 from src.search_space.search_space import SearchSpace
 from src.utilities.plotting import Plot
 from IK import IK,glo2loc,q_glob2q_robot
-from Object_visualization import RotatedRect, object_visualize
+from Object_visualization import RotatedRect, object_visualize,convert_rectangle, path_sampling
 
 # search space dimensions
-x = 1000
-y = 600
+x =800 #1000
+y =450 #600
 angle = 360
 
 X_dimensions = np.array([(0, x), (0, y), (0,angle)])  # dimensions of Search Space - x,y,angle
-# obstacles - for OpenCv
-obstacle = (450,200,300,400,0)
 
-# Moving Object - parameters 
-center = (900, 250)
+# obstacles - for intesection
+#obstacle = (450,350,300,500,0)
+obstacle = (400,175,300,400,0)
+
+# Moving Object - parameters
+center = (750, 250)
 width = 20
 height = 100
 angle = 0
 object = (center[0],center[1],width,height,angle)
 
-#Obstacles = np.array([(200, 300, 300, 600),(700, 0, 800, 400)])
-x_init = (900,250,0)  # starting location
-x_goal = (100, 350,0)  # goal location
+#start an goal
+x_init = (750,250,0)  # starting location
+x_goal = (100, 150,0)  # goal location
 
 Q = np.array([(10, 5)])  # length of tree edges
 r = 1  # length of smallest edge to check for intersection with obstacles
-max_samples = 5000  # max number of samples to take before timing out
-prc = 0.0  # probability of checking for a connection to goal
+max_samples = 8000  # max number of samples to take before timing out
+prc = 0.2          # probability of checking for a connection to goal
 
 # create search space
 X = SearchSpace(X_dimensions)
 
+test = X.dimension_lengths[0,0]
+
 # create rrt_search
 rrt = RRT(X, Q, x_init, x_goal, max_samples, r, prc, object, obstacle)
-path = rrt.rrt_search(object, obstacle)
+path = rrt.rrt_search()
 
 
 # # plot
@@ -60,7 +64,10 @@ path = rrt.rrt_search(object, obstacle)
 # Create a white image
 img = np.full((y, x, 3), 255, dtype=np.uint8)
 
-cv.rectangle(img,(300,0),(600,400),(200,255,0),thickness=-1)
+# prekazka
+rect_points = convert_rectangle(obstacle)
+rect_color = (200,255,0)
+cv.rectangle(img,(rect_points[0],rect_points[1]),(rect_points[2],rect_points[3]),rect_color,thickness=-1)
 #interpretacia pre prienik
  
 # Draw the rotated rectangle
@@ -69,7 +76,7 @@ cv.rectangle(img,(300,0),(600,400),(200,255,0),thickness=-1)
 frames = []
 img2 = np.copy(img)
 
-for pos in path:
+for pos in path_sampling(path):
 
     center = (pos[0],pos[1])
     angle = pos[2]
@@ -83,7 +90,7 @@ for pos in path:
     cv.polylines(img, [intersection], isClosed=True, color=(0, 0, 255), thickness=2)
 
     if len(intersection) != 0:
-        print ("Collision !!!")
+        print ("Collision !")
 
     frames.append(img) # GIF
     cv.imshow("image",img)
@@ -107,7 +114,7 @@ for pos in path:
 
 # print ("Path in Q")
 # print (path_q)
-    
+       
 # #Save GIF
 # with imageio.get_writer("moving-object.gif",mode="I") as writer:
 #     for frame in frames:

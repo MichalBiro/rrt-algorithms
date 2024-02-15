@@ -8,7 +8,7 @@ from Object_visualization import RotatedRect, object_visualize
 
 
 class RRTBase(object):
-    def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, object=None , obstacle=None):
+    def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, object=None, obstacle=None):
         """
         Template RRT planner
         :param X: Search Space
@@ -27,7 +27,7 @@ class RRTBase(object):
         self.prc = prc
         self.x_init = x_init
         self.x_goal = x_goal
-        self.object2d = object
+        self.object = object
         self.obstacle = obstacle
         self.trees = []  # list of all trees
         self.add_tree()  # add initial tree
@@ -76,7 +76,7 @@ class RRTBase(object):
         """
         return next(self.nearby(tree, x, 1))
 
-    def new_and_near(self, tree, q, object, obstacle):
+    def new_and_near(self, tree, q):
         """
         Return a new steered vertex and the vertex in tree that is nearest
         :param tree: int, tree being searched
@@ -87,35 +87,33 @@ class RRTBase(object):
         x_nearest = self.get_nearest(tree, x_rand)
         x_new = self.bound_point(steer(x_nearest, x_rand, q[0]))
         # check if new point is in X_free and not already in V
-        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new):
+        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new) or self.collision_check(
+                x_new) == True:
             return None, None
-        
 
-        # funkcia na overenie kolizie objektu s prekazkou
-        center = (x_new[0],x_new[1])
-        width = object[2]
-        height = object[3]
-        angle = object[4]
-        obstacle1 = RotatedRect(obstacle[0],obstacle[1],obstacle[2],obstacle[3],obstacle[4])
-        [rotated_pts, intersection] = object_visualize(center,width,height,angle,obstacle1)
-        if len(intersection) != 0:
-            print ("Collision - wrong configuration")
-            return None, None
-        
         self.samples_taken += 1
         return x_new, x_nearest
-    
-    # def collision_check(object,obstacle):
-    # # funkcia na overenie kolizie objektu s prekazkou
-    #     center = (object[0],object[1])
-    #     width = object[2]
-    #     height = object[3]
-    #     angle = object[4]
-    #     obstacle1 = RotatedRect(obstacle[0],obstacle[1],obstacle[2],obstacle[3],obstacle[4])
-    #     [rotated_pts, intersection] = object_visualize(center,width,height,angle,obstacle1)
-    #     if len(intersection) != 0:
-    #         print ("EMPTY")
-    #         return None, None
+
+    def collision_check(self, x_new):
+        # funkcia na overenie kolizie objektu s prekazkou
+        center = (x_new[0], x_new[1])
+        width = self.object[2]
+        height = self.object[3]
+        angle = x_new[2]
+        obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],
+                                self.obstacle[4])
+        [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
+        # collision
+        if len(intersection) != 0:
+            print("Collision !")
+            return True
+        # out of bounds
+        for points in rotated_pts:
+            if points[0] < self.X.dimension_lengths[0,0] or points[0] > self.X.dimension_lengths[0,1] or points[1] < self.X.dimension_lengths[1,0] or points[1] > self.X.dimension_lengths[1,1]:
+                print("Out of searchspace !")
+                return True
+
+        return False
 
     def connect_to_point(self, tree, x_a, x_b):
         """
@@ -125,7 +123,6 @@ class RRTBase(object):
         :param x_b: tuple, vertex
         :return: bool, True if able to add edge, False if prohibited by an obstacle
         """
-
 
         if self.trees[tree].V.count(x_b) == 0 and self.X.collision_free(x_a, x_b, self.r):
             self.add_vertex(tree, x_b)
@@ -143,7 +140,7 @@ class RRTBase(object):
         if self.x_goal in self.trees[tree].E and x_nearest in self.trees[tree].E[self.x_goal]:
             # tree is already connected to goal using nearest vertex
             return True
-        if self.X.collision_free(x_nearest, self.x_goal, self.r):  # check if obstacle-free
+        if self.X.collision_free(x_nearest, self.x_goal, self.r) and self.linear_sampling_collision_check(x_nearest,self.x_goal) == False:  # check if obstacle-free
             return True
         return False
 
@@ -204,3 +201,34 @@ class RRTBase(object):
         point = np.maximum(point, self.X.dimension_lengths[:, 0])
         point = np.minimum(point, self.X.dimension_lengths[:, 1])
         return tuple(point)
+
+    def linear_sampling_collision_check(self,start,goal):
+        samples = 200                        #number of position checked between start and goal
+        range_x = abs(start[0] - goal[0])
+        range_y = abs(start[1] - goal[1])
+        range_angle = abs(start[2] - goal[2])
+        increment_x = range_x / samples
+        increment_y = range_y / samples
+        increment_angle = range_angle / samples
+
+        for i in range(1,samples):
+            if start[0] < goal[0]:
+                x = start[0] + i*increment_x
+            else:
+                x = start[0] - i*increment_x
+
+            if start[1] < goal[1]:
+                y = start[1] + i*increment_y
+            else:
+                y = start[1] - i*increment_y
+
+            if start[2] < goal[2]:
+                angle = start[2] + i*increment_angle
+            else:
+                angle = start[2] - i*increment_angle
+
+            position = (x,y,angle)
+            if self.collision_check(position):
+                return True
+
+        return False
