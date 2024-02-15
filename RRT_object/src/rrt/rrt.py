@@ -16,7 +16,7 @@ class RRT(RRTBase):
         :param r: resolution of points to sample along edge when checking for collisions
         :param prc: probability of checking whether there is a solution
         """
-        super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, object , obstacle)
+        super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, object, obstacle)
 
     def rrt_search(self):
         """

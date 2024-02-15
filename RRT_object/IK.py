@@ -59,7 +59,7 @@ def IK (pos):
 
 
 
-local=glo2loc(pos)
-print(local)
-print(IK(local))
-print(q_glob2q_robot(IK(local)))
+# local=glo2loc(pos)
+# print(local)
+# print(IK(local))
+# print(q_glob2q_robot(IK(local)))

@@ -8,7 +8,7 @@ from src.rrt.rrt import RRT
 
 
 class RRTStar(RRT):
-    def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, rewire_count=None):
+    def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, rewire_count=None, object=None, obstacle=None):
         """
         RRT* Search
         :param X: Search Space
@@ -20,7 +20,7 @@ class RRTStar(RRT):
         :param prc: probability of checking whether there is a solution
         :param rewire_count: number of nearby vertices to rewire
         """
-        super().__init__(X, Q, x_init, x_goal, max_samples, r, prc)
+        super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, object, obstacle)
         self.rewire_count = rewire_count if rewire_count is not None else 0
         self.c_best = float('inf')  # length of best solution thus far
 
@@ -54,7 +54,7 @@ class RRTStar(RRT):
         for c_near, x_near in L_near:
             curr_cost = path_cost(self.trees[tree].E, self.x_init, x_near)
             tent_cost = path_cost(self.trees[tree].E, self.x_init, x_new) + segment_cost(x_new, x_near)
-            if tent_cost < curr_cost and self.X.collision_free(x_near, x_new, self.r):
+            if tent_cost < curr_cost and self.X.collision_free(x_near, x_new, self.r) and self.linear_sampling_collision_check(x_near,x_new) == False:  # check if obstacle-free
                 self.trees[tree].E[x_near] = x_new
 
     def connect_shortest_valid(self, tree, x_new, L_near):

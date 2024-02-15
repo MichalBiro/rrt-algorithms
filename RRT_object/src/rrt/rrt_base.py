@@ -87,8 +87,7 @@ class RRTBase(object):
         x_nearest = self.get_nearest(tree, x_rand)
         x_new = self.bound_point(steer(x_nearest, x_rand, q[0]))
         # check if new point is in X_free and not already in V
-        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new) or self.collision_check(
-                x_new) == True:
+        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new) or self.collision_check(x_new) == True:
             return None, None
 
         self.samples_taken += 1
@@ -105,12 +104,12 @@ class RRTBase(object):
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
         # collision
         if len(intersection) != 0:
-            print("Collision !")
+            #print("Collision !")
             return True
         # out of bounds
         for points in rotated_pts:
             if points[0] < self.X.dimension_lengths[0,0] or points[0] > self.X.dimension_lengths[0,1] or points[1] < self.X.dimension_lengths[1,0] or points[1] > self.X.dimension_lengths[1,1]:
-                print("Out of searchspace !")
+                #print("Out of searchspace !")
                 return True
 
         return False
@@ -124,7 +123,7 @@ class RRTBase(object):
         :return: bool, True if able to add edge, False if prohibited by an obstacle
         """
 
-        if self.trees[tree].V.count(x_b) == 0 and self.X.collision_free(x_a, x_b, self.r):
+        if self.trees[tree].V.count(x_b) == 0 and self.X.collision_free(x_a, x_b, self.r) and self.linear_sampling_collision_check(x_a,x_b) == False:
             self.add_vertex(tree, x_b)
             self.add_edge(tree, x_b, x_a)
             return True
@@ -153,7 +152,7 @@ class RRTBase(object):
             print("Can connect to goal")
             self.connect_to_goal(0)
             return self.reconstruct_path(0, self.x_init, self.x_goal)
-        print("Could not connect to goal")
+        #print("Could not connect to goal")
         return None
 
     def connect_to_goal(self, tree):
@@ -187,7 +186,7 @@ class RRTBase(object):
     def check_solution(self):
         # probabilistically check if solution found
         if self.prc and random.random() < self.prc:
-            print("Checking if can connect to goal at", str(self.samples_taken), "samples")
+            #print("Checking if can connect to goal at", str(self.samples_taken), "samples")
             path = self.get_path()
             if path is not None:
                 return True, path
@@ -203,29 +202,31 @@ class RRTBase(object):
         return tuple(point)
 
     def linear_sampling_collision_check(self,start,goal):
-        samples = 200                        #number of position checked between start and goal
+        samples = 20                        #number of position checked between start and goal
         range_x = abs(start[0] - goal[0])
         range_y = abs(start[1] - goal[1])
         range_angle = abs(start[2] - goal[2])
         increment_x = range_x / samples
         increment_y = range_y / samples
-        increment_angle = range_angle / samples
+        if range_angle < 180: increment_angle = range_angle / samples
+        else: increment_angle = (range_angle - 180) / samples
 
         for i in range(1,samples):
-            if start[0] < goal[0]:
-                x = start[0] + i*increment_x
-            else:
-                x = start[0] - i*increment_x
+            if start[0] < goal[0]: x = start[0] + i*increment_x
+            else: x = start[0] - i*increment_x
 
-            if start[1] < goal[1]:
-                y = start[1] + i*increment_y
-            else:
-                y = start[1] - i*increment_y
+            if start[1] < goal[1]: y = start[1] + i*increment_y
+            else: y = start[1] - i*increment_y
 
-            if start[2] < goal[2]:
-                angle = start[2] + i*increment_angle
+            if range_angle < 180:
+                if start[2] < goal[2]: angle = start[2] + i * increment_angle
+                else: angle = start[2] - i * increment_angle
             else:
-                angle = start[2] - i*increment_angle
+                if start[2] < goal[2]: angle = start[2] - i * increment_angle
+                else: angle = start[2] + i * increment_angle
+
+            if angle >= 360: angle = angle - 360
+            if angle < 0: angle = angle + 360
 
             position = (x,y,angle)
             if self.collision_check(position):

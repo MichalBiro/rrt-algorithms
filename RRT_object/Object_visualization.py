@@ -81,29 +81,31 @@ def path_sampling(path):
         path_visualization.append(start)
         if abs(start[0]-goal[0]) > 20 or abs(start[1]-goal[1]) > 20 or abs(start[2]-goal[2]) > 20:
 
-            samples = 30  # number of position checked between start and goal
+            samples = 10  # number of position checked between start and goal
             range_x = abs(start[0] - goal[0])
             range_y = abs(start[1] - goal[1])
             range_angle = abs(start[2] - goal[2])
             increment_x = range_x / samples
             increment_y = range_y / samples
-            increment_angle = range_angle / samples
+            if range_angle < 180: increment_angle = range_angle / samples
+            else: increment_angle = (range_angle - 180) / samples
 
             for i in range(1, samples):
-                if start[0] < goal[0]:
-                    x = start[0] + i * increment_x
-                else:
-                    x = start[0] - i * increment_x
+                if start[0] < goal[0]: x = start[0] + i * increment_x
+                else: x = start[0] - i * increment_x
 
-                if start[1] < goal[1]:
-                    y = start[1] + i * increment_y
-                else:
-                    y = start[1] - i * increment_y
+                if start[1] < goal[1]: y = start[1] + i * increment_y
+                else: y = start[1] - i * increment_y
 
-                if start[2] < goal[2]:
-                    angle = start[2] + i * increment_angle
+                if range_angle < 180:
+                    if start[2] < goal[2]: angle = start[2] + i * increment_angle
+                    else: angle = start[2] - i * increment_angle
                 else:
-                    angle = start[2] - i * increment_angle
+                    if start[2] < goal[2]: angle = start[2] + i * increment_angle
+                    else: angle = start[2] - i * increment_angle
+
+                if angle >= 360: angle = angle - 360
+                if angle < 0: angle = angle + 360
 
                 position = (x, y, angle)
                 path_visualization.append(position)
@@ -130,11 +132,11 @@ width = 20
 height = 100
 angle = 0
 [rotated_pts, intersection] = object_visualize(center, width, height, angle, r1)
-if len(intersection) != 0:
-    print("EMPTY")
-
-# create GIF
-frames = []
+# if len(intersection) != 0:
+#     print("EMPTY")
+#
+# # create GIF
+# frames = []
 
 # for i in range (150):
 #     if (i<50):
