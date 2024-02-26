@@ -8,7 +8,7 @@ import time
 from src.rrt.rrt import RRT
 from src.search_space.search_space import SearchSpace
 from src.utilities.plotting import Plot
-from IK import IK,glo2loc,q_glob2q_robot
+from src. robot_arm import IK,glo2loc,q_glob2q_robot
 from Object_visualization import RotatedRect, object_visualize,convert_rectangle, path_sampling
 
 # Record the start time
@@ -117,9 +117,9 @@ for pos in path_sampling(path):
 # print ("Path in Q")
 # print (path_q)
 
-#Save GIF
-with imageio.get_writer("RRT.gif",mode="I") as writer:
-    for frame in frames:
-        print("Adding frame to GIF file")
-        rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-        writer.append_data(rgb_frame)
+3# Save GIF
+# with imageio.get_writer("RRT.gif",mode="I") as writer:
+#     for frame in frames:
+#         print("Adding frame to GIF file")
+#         rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+#         writer.append_data(rgb_frame)

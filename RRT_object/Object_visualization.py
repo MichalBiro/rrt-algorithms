@@ -2,6 +2,8 @@ import numpy as np
 import cv2 as cv
 import shapely.geometry
 import shapely.affinity
+import math
+from src.robot_arm import FK, glo2loc, loc2glo
 import imageio
 
 
@@ -78,6 +80,7 @@ def path_sampling(path):
     for j in range(len(path)-1):
         start = path[j]
         goal = path[j + 1]
+
         path_visualization.append(start)
         if abs(start[0]-goal[0]) > 20 or abs(start[1]-goal[1]) > 20 or abs(start[2]-goal[2]) > 20:
 
