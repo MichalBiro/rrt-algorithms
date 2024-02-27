@@ -107,7 +107,7 @@ class RRTBase_Q(object):
         center = (x_new[0], x_new[1])
         width = self.object[2]
         height = self.object[3]
-        angle = x_new[2]
+        angle = 360-x_new[2]
         obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],
                                 self.obstacle[4])
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
@@ -132,7 +132,7 @@ class RRTBase_Q(object):
         :return: bool, True if able to add edge, False if prohibited by an obstacle
         """
 
-        if self.trees[tree].V.count(x_b) == 0 and self.X.collision_free(x_a, x_b, self.r) and self.linear_sampling_collision_check(x_a,x_b) == False:
+        if self.trees[tree].V.count(x_b) == 0 and self.X.collision_free(x_a, x_b, self.r): #and self.linear_sampling_collision_check(x_a,x_b) == False:
             self.add_vertex(tree, x_b)
             self.add_edge(tree, x_b, x_a)
             return True
