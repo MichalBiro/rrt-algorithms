@@ -120,9 +120,11 @@ def path_sampling(path):
 
         if abs(start[0]-goal[0]) > 10 or abs(start[1]-goal[1]) > 10:
 
-            samples = 10  # number of position checked between start and goal
+            increment = 3  # number of position checked between start and goal
             range_q1 = abs(start[0] - goal[0])
             range_q2 = abs(start[1] - goal[1])
+            d = math.sqrt(range_q1 ** 2 + range_q2 ** 2)  # prepona
+            samples = int(d / increment)
 
             increment_x = range_q1 / samples
             increment_y = range_q2 / samples

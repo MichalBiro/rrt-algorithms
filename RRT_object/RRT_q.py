@@ -32,8 +32,8 @@ obstacle = (500, 550, 100, 550, 0)
 
 # Moving Object - parameters
 center = (750, 250)
-width = 30
-height = 150
+width = 150
+height = 200
 angle = 0
 object = (center[0], center[1], width, height, angle)
 
@@ -49,7 +49,7 @@ object = (center[0], center[1], width, height, angle)
 # x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 
 x_q_init = (0,1.57)
-x_q_goal = (1.57,1)
+x_q_goal = (1.57,1.1)
 x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
 x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 print ("Goal:",x_q_goal)

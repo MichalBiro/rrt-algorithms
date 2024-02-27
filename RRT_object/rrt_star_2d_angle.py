@@ -27,8 +27,8 @@ obstacle = (400,175,300,400,0) #(400,175,300,400,0)
 
 # Moving Object - parameters
 center = (750, 250)
-width = 20
-height = 100
+width = 50
+height = 200
 angle = 0
 object = (center[0],center[1],width,height,angle)
 
@@ -38,8 +38,8 @@ x_goal = (100, 150,0)  # goal location
 
 Q = np.array([(10, 5)])  # length of tree edges
 r = 1  # length of smallest edge to check for intersection with obstacles
-max_samples = 5000  # max number of samples to take before timing out
-rewire_count = 32  # optional, number of nearby branches to rewire
+max_samples = 3000  # max number of samples to take before timing out
+rewire_count = 10  # optional, number of nearby branches to rewire
 prc = 0.1  # probability of checking for a connection to goal
 
 # create Search Space

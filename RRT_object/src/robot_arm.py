@@ -108,6 +108,6 @@ def IK (pos):
 # print(IK(local))
 # print(q_glob2q_robot(IK(local)))
 
-pos = (1.57,1.57)
-fk = FK(pos)
-print (fk)
+# pos = (1.57,1.57)
+# fk = FK(pos)
+# print (fk)

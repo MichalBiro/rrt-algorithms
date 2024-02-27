@@ -92,7 +92,7 @@ class RRTBase_Q(object):
         x_new = self.bound_point(steer(x_nearest, x_rand, q[0]))
 
         # check if new point is in X_free and not already in V
-        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new) or self.collision_check(x_new) == True:
+        if not self.trees[0].V.count(x_new) == 0 or self.collision_check(x_new) == True:
             return None, None
 
 
@@ -132,7 +132,7 @@ class RRTBase_Q(object):
         :return: bool, True if able to add edge, False if prohibited by an obstacle
         """
 
-        if self.trees[tree].V.count(x_b) == 0 and self.X.collision_free(x_a, x_b, self.r): #and self.linear_sampling_collision_check(x_a,x_b) == False:
+        if self.trees[tree].V.count(x_b) == 0: #and self.linear_sampling_collision_check(x_a,x_b) == False:
             self.add_vertex(tree, x_b)
             self.add_edge(tree, x_b, x_a)
             return True
@@ -148,7 +148,7 @@ class RRTBase_Q(object):
         if self.x_goal in self.trees[tree].E and x_nearest in self.trees[tree].E[self.x_goal]:
             # tree is already connected to goal using nearest vertex
             return True
-        if self.X.collision_free(x_nearest, self.x_goal, self.r) and self.linear_sampling_collision_check(x_nearest,self.x_goal) == False:  # check if obstacle-free
+        if self.linear_sampling_collision_check(x_nearest,self.x_goal) == False:  # check if obstacle-free
             return True
         return False
 
@@ -159,6 +159,7 @@ class RRTBase_Q(object):
         """
         if self.can_connect_to_goal(0):
             print("Can connect to goal")
+            print("Samples taken:",self.samples_taken)
             self.connect_to_goal(0)
             return self.reconstruct_path(0, self.x_init, self.x_goal)
         #print("Could not connect to goal")
@@ -217,9 +218,13 @@ class RRTBase_Q(object):
 
     def linear_sampling_collision_check(self,start,goal):
 
-        samples = 20                #number of position checked between start and goal
+        increment = 3  #degrees
         range_q1 = abs(start[0] - goal[0])
         range_q2 = abs(start[1] - goal[1])
+        d = math.sqrt(range_q1 ** 2 + range_q2 ** 2)  # prepona
+        samples = int(d / increment)
+        if samples == 0:
+            return False
 
         increment_x = range_q1 / samples
         increment_y = range_q2 / samples
