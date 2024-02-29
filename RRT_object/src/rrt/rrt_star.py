@@ -91,6 +91,11 @@ class RRTStar(RRT):
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
 
+        # check solution on 1 sample
+        solution = self.check_solution()
+        if solution[0]:
+            return solution[1]
+
         while True:
             for q in self.Q:  # iterate over different edge lengths
                 for i in range(q[1]):  # iterate over number of edges of given length to add

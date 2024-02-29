@@ -8,7 +8,7 @@ import numpy as np
 import sys
 
 
-loc_zero=[500,85,0]
+loc_zero=[525,(85+230),0]
 # x=500
 # y=185
 # pos =[x,y]

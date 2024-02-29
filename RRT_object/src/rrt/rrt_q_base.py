@@ -195,7 +195,8 @@ class RRTBase_Q(object):
 
     def check_solution(self):
         # probabilistically check if solution found
-        if self.prc and random.random() < self.prc:
+
+        if (self.prc and random.random() < self.prc) or self.samples_taken <=1:
             #print("Checking if can connect to goal at", str(self.samples_taken), "samples")
             path = self.get_path()
             if path is not None:

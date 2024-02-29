@@ -24,8 +24,14 @@ class RRT_Q(RRTBase_Q):
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
         :return: list representation of path, dict representing edges of tree in form E[child] = parent
         """
+
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
+
+        solution = self.check_solution()
+        if solution[0]:
+            return solution[1]
+
 
         while True:
             for q in self.Q:  # iterate over different edge lengths until solution found or time out

@@ -23,7 +23,7 @@ X_dimensions = np.array([(0, x), (0, y), (0,angle)])  # dimensions of Search Spa
 
 # obstacles - for intesection
 #obstacle = (450,350,300,500,0)
-obstacle = (400,175,300,400,0) #(400,175,300,400,0)
+obstacle = (400,-200,300,400,0) #(400,175,300,400,0)
 
 # Moving Object - parameters
 center = (750, 250)

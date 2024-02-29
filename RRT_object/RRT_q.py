@@ -9,7 +9,7 @@ import imageio
 
 from src.rrt.rrt_q import RRT_Q
 from src.search_space.search_space import SearchSpace
-from src.robot_arm import FK,loc2glo
+from src.robot_arm import FK,loc2glo,glo2loc,IK
 from Object_visualization_q import RotatedRect, object_visualize, convert_rectangle, path_sampling, robot_visualization
 
 # Record the start time
@@ -19,8 +19,8 @@ start_time = time.time()
 q1_space = (0,180)  # degrees
 q2_space = (0,360)  # degrees
 #search space 2D [x,y]
-x =(0,1000) #1000
-y =(0,700) #700
+x =(0,1050) #1050
+y =(0,745) #745
 XY_dimensions = (x,y)
 f = XY_dimensions[0][0]
 
@@ -28,18 +28,18 @@ X_dimensions = np.array([q1_space,q2_space])  # dimensions of Search Space - x,y
 
 # obstacles - for intesection
 # obstacle = (450,350,300,500,0)
-obstacle = (500, 550, 100, 550, 0)
+obstacle = (525, 115, 130, 230, 0)
 
 # Moving Object - parameters
 center = (750, 250)
-width = 150
-height = 200
+width = 100
+height = 100
 angle = 0
 object = (center[0], center[1], width, height, angle)
 
-# #start an goal - in 2D [xy]
+#start an goal - in 2D [xy]
 # x_init = (800, 200, 0)  # starting location
-# x_goal = (100, 300, 0)  # goal location
+# x_goal = (250, 300, 0)  # goal location
 # # start an goal - in Q [q1,q2]
 # x_init = glo2loc(x_init)
 # x_goal = glo2loc(x_goal)
@@ -48,8 +48,8 @@ object = (center[0], center[1], width, height, angle)
 # x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
 # x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 
-x_q_init = (0,1.57)
-x_q_goal = (1.57,1.1)
+x_q_init = (0,2.5)
+x_q_goal = (3,1.57)
 x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
 x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 print ("Goal:",x_q_goal)
@@ -99,7 +99,6 @@ frames = []  # create GIF
 
 img2 = np.copy(img)
 for pos_q in path_sampling(path):
-    print(pos_q)
     pos_xy = FK(pos_q)
     pos_xy = loc2glo(pos_xy)
     center = (pos_xy[0], pos_xy[1])
@@ -119,9 +118,12 @@ for pos_q in path_sampling(path):
     thickness = 3
     cv.line(img,robot_joints[0], robot_joints[1], color, thickness)
     cv.line(img,robot_joints[1], robot_joints[2], color, thickness)
+
     if len(intersection) != 0:
         print("Collision !")
 
+    # otocenie obrazka - zrkadlovo y
+    img = cv.flip(img, 0)
     frames.append(img)  # GIF
     cv.imshow("image", img)
     cv.waitKey()

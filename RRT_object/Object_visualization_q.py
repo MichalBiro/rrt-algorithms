@@ -76,7 +76,7 @@ def object_visualize(center, width, height, angle, obstacle):
 
 def robot_visualization(pos_q):
 
-    robot_start_point = (500, 85)
+    robot_start_point = (525, (230+85))
 
     # Define the length of the line
     l1 = 360
