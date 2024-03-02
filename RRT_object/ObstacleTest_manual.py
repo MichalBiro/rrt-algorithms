@@ -12,15 +12,15 @@ angle = 180
 
 def update_position(x):
     global q1, q2
-    q1 = cv.getTrackbarPos("q1", "Image")
-    q2 = cv.getTrackbarPos("q2", "Image")
+    q1 = cv.getTrackbarPos("q1", "control")
+    q2 = cv.getTrackbarPos("q2", "control")
     redraw_image()
 
 def update_object(x):
     global width, height, angle
-    width = cv.getTrackbarPos("O-Width", "Image")
-    height = cv.getTrackbarPos("O-Height", "Image")
-    angle = cv.getTrackbarPos("O-Angle", "Image")
+    width = cv.getTrackbarPos("O-Width", "control")
+    height = cv.getTrackbarPos("O-Height", "control")
+    angle = cv.getTrackbarPos("O-Angle", "control")
     redraw_image()
 
 # Function to redraw the image with the rectangle at the updated position
@@ -67,16 +67,18 @@ image = np.full((745, 1050, 3), 255, dtype=np.uint8)
 
 # Create a window and display the image
 cv.namedWindow("Image")
+cv.namedWindow("control",cv.WINDOW_NORMAL)
+cv.resizeWindow("control", 600,200)
 cv.imshow("Image", image)
 
 # Create trackbars for adjusting the position
-cv.createTrackbar("q1", "Image", 35, 180, update_position)
-cv.createTrackbar("q2", "Image", 235, 360, update_position)
+cv.createTrackbar("q1", "control", 60, 180, update_position)
+cv.createTrackbar("q2", "control", 240, 360, update_position)
 
 # Create trackbars for adjusting the size of the obstacle
-cv.createTrackbar("O-Angle", "Image", angle, 360, update_object)
-cv.createTrackbar("O-Width", "Image", 100,700, update_object)
-cv.createTrackbar("O-Height", "Image", 100, 700, update_object)
+cv.createTrackbar("O-Angle", "control", angle, 360, update_object)
+cv.createTrackbar("O-Width", "control", 100,700, update_object)
+cv.createTrackbar("O-Height", "control", 100, 700, update_object)
 
 
 # Initially draw the rectangle at the default position

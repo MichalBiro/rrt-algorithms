@@ -15,28 +15,29 @@ from Object_visualization import RotatedRect, object_visualize,convert_rectangle
 start_time = time.time()
 
 # search space dimensions
-x =800 #1000
-y =450 #600
+x =1050
+y =745
 angle = 360
 
 X_dimensions = np.array([(0, x), (0, y), (0,angle)])  # dimensions of Search Space - x,y,angle
 
 # obstacles - for intesection
-#obstacle = (450,350,300,500,0)
-obstacle = (400,175,300,400,0) #(400,175,300,400,0)
+#obstacle = (400,5,100,100,0) #(400,175,300,400,0)
+obstacle = (525, 115, 130, 230, 0) # real obstacle
+
+#start an goal
+x_init = (800,200,0)  # starting location
+x_goal = (200,300,0)  # goal location
 
 # Moving Object - parameters
-center = (750, 250)
-width = 50
-height = 200
+center = (x_init[0],x_init[1])
+width = 200
+height = 350
 angle = 0
 object = (center[0],center[1],width,height,angle)
 
-#start an goal
-x_init = (750,250,0)  # starting location
-x_goal = (100, 150,0)  # goal location
 
-Q = np.array([(10, 5)])  # length of tree edges
+Q = np.array([(10,5)])  # length of tree edges
 r = 1  # length of smallest edge to check for intersection with obstacles
 max_samples = 3000  # max number of samples to take before timing out
 rewire_count = 10  # optional, number of nearby branches to rewire
@@ -95,6 +96,8 @@ for pos in path_sampling(path):
     if len(intersection) != 0:
         print("Collision !")
 
+    # otocenie obrazka - zrkadlovo y
+    img = cv.flip(img, 0)
     frames.append(img)  # GIF
     cv.imshow("image", img)
     cv.waitKey()

@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 import shapely.geometry
+from shapely.geometry import Polygon
 import shapely.affinity
 import math
 from src.robot_arm import FK, glo2loc, loc2glo
@@ -35,6 +36,8 @@ def convert_rectangle(rectangle):
     rect_pts = (
         center[0] - width // 2, center[1] - height // 2,
         center[0] + width // 2, center[1] + height // 2)
+
+
     return rect_pts
 
 
@@ -47,13 +50,17 @@ def object_visualize(center, width, height, angle, obstacle):
     # height = 100
     # angle = 70
     # interpretacia pre prienik
+    x = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
     r1 = obstacle
     r2 = RotatedRect(center[0], center[1], width, height, angle)
 
     # prienik 2 objektov - kolizia
     intersection = r1.intersection(r2)
-    intersection = np.array(intersection.exterior.coords)
-    intersection = intersection.astype(int)
+    if type(intersection) is Polygon:
+        intersection = np.array(intersection.exterior.coords)
+        intersection = intersection.astype(int)
+    else:
+        intersection = []
 
     # cv.rectangle(img, (center[0] - width // 2, center[1] - height // 2),(center[0] + width // 2, center[1] + height // 2), color, thickness)
 
@@ -87,15 +94,38 @@ def path_sampling(path):
             increment = 10  #mm
             range_x = abs(start[0] - goal[0])
             range_y = abs(start[1] - goal[1])
-            d = math.sqrt(range_x ** 2 + range_y ** 2)  # prepona
+            range_angle = (abs(start[2] - goal[2]) / 360) * 800 # normalizacia uhla na mm - 360 deg = 800 mm -> range_angle/360 * 800
+            d = math.sqrt(range_x ** 2 + range_y ** 2 + range_angle ** 2)  # prepona
             samples = int(d / increment)
             if samples == 0: samples=1
             range_angle = abs(start[2] - goal[2])
             increment_x = range_x / samples
             increment_y = range_y / samples
-            if range_angle < 180: increment_angle = range_angle / samples
-            else: increment_angle = (range_angle - 180) / samples
+            increment_angle = range_angle / samples
 
+            # # moze prerotovat cez 0
+            # for i in range(1,samples):
+            #     if start[0] < goal[0]: x = start[0] + i*increment_x
+            #     else: x = start[0] - i*increment_x
+            #
+            #     if start[1] < goal[1]: y = start[1] + i*increment_y
+            #     else: y = start[1] - i*increment_y
+            #
+            #     if range_angle < 180:
+            #         if start[2] < goal[2]: angle = start[2] + i * increment_angle
+            #         else: angle = start[2] - i * increment_angle
+            #     else:
+            #         if start[2] < goal[2]: angle = start[2] - i * increment_angle
+            #         else: angle = start[2] + i * increment_angle
+            #
+            #     if angle >= 360: angle = angle - 360
+            #     if angle < 0: angle = angle + 360
+            #
+            #     position = (x,y,angle)
+            #     path_visualization.append(position)
+
+
+            # nemoze prerotovat cez 0
             for i in range(1, samples):
                 if start[0] < goal[0]: x = start[0] + i * increment_x
                 else: x = start[0] - i * increment_x
@@ -103,15 +133,8 @@ def path_sampling(path):
                 if start[1] < goal[1]: y = start[1] + i * increment_y
                 else: y = start[1] - i * increment_y
 
-                if range_angle < 180:
-                    if start[2] < goal[2]: angle = start[2] + i * increment_angle
-                    else: angle = start[2] - i * increment_angle
-                else:
-                    if start[2] < goal[2]: angle = start[2] + i * increment_angle
-                    else: angle = start[2] - i * increment_angle
-
-                if angle >= 360: angle = angle - 360
-                if angle < 0: angle = angle + 360
+                if start[2] < goal[2]: angle = start[2] + i * increment_angle
+                else: angle = start[2] - i * increment_angle
 
                 position = (x, y, angle)
                 path_visualization.append(position)

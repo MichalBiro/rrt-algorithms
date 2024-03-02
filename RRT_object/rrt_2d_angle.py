@@ -15,26 +15,28 @@ from Object_visualization import RotatedRect, object_visualize,convert_rectangle
 start_time = time.time()
 
 # search space dimensions
-x =800 #1000
-y =450 #600
+x =1050
+y =745 #600
 angle = 360
 
 X_dimensions = np.array([(0, x), (0, y), (0,angle)])  # dimensions of Search Space - x,y,angle
 
 # obstacles - for intesection
 #obstacle = (450,350,300,500,0)
-obstacle = (400,-200,300,400,0) #(400,175,300,400,0)
+# obstacle = (400,-200,300,400,0) #(400,175,300,400,0)
+obstacle = (525, 115, 130, 230, 0) # real obstacle
+
+#start an goal
+x_init = (800, 250, 180)  # starting location
+x_goal = (250, 250, 180)#(100, 150, 0)  # goal location
 
 # Moving Object - parameters
-center = (750, 250)
-width = 50
-height = 200
+center = (x_init[0],x_init[1])
+width = 300
+height = 400
 angle = 0
 object = (center[0],center[1],width,height,angle)
 
-#start an goal
-x_init = (750,250,0)  # starting location
-x_goal = (100, 150,0)  # goal location
 
 Q = np.array([(10, 5)])  # length of tree edges
 r = 1  # length of smallest edge to check for intersection with obstacles
@@ -94,6 +96,8 @@ for pos in path_sampling(path):
     if len(intersection) != 0:
         print ("Collision !")
 
+    # otocenie obrazka - zrkadlovo y
+    img = cv.flip(img, 0)
     frames.append(img) # GIF
     cv.imshow("image",img)
     cv.waitKey() 
@@ -117,7 +121,7 @@ for pos in path_sampling(path):
 # print ("Path in Q")
 # print (path_q)
 
-3# Save GIF
+# Save GIF
 # with imageio.get_writer("RRT.gif",mode="I") as writer:
 #     for frame in frames:
 #         print("Adding frame to GIF file")

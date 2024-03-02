@@ -208,7 +208,9 @@ class RRTBase(object):
         increment = 10  #mm
         range_x = abs(start[0] - goal[0])
         range_y = abs(start[1] - goal[1])
-        d = math.sqrt(range_x**2 + range_y**2)#prepona
+        range_angle = (abs(start[2] - goal[2])/360)*800
+        # normalizacia uhla na mm - 360 = 800 -> range_angle/360 * 800
+        d = math.sqrt(range_x**2 + range_y**2 + range_angle**2)#prepona
         samples = int(d/increment)
         if samples == 0:
             return False
@@ -219,24 +221,46 @@ class RRTBase(object):
         if range_angle < 180: increment_angle = range_angle / samples
         else: increment_angle = (range_angle - 180) / samples
 
-        for i in range(1,samples):
-            if start[0] < goal[0]: x = start[0] + i*increment_x
-            else: x = start[0] - i*increment_x
+        # # moze prerotovat cez 0
+        # for i in range(1,samples):
+        #     if start[0] < goal[0]: x = start[0] + i*increment_x
+        #     else: x = start[0] - i*increment_x
+        #
+        #     if start[1] < goal[1]: y = start[1] + i*increment_y
+        #     else: y = start[1] - i*increment_y
+        #
+        #     if range_angle < 180:
+        #         if start[2] < goal[2]: angle = start[2] + i * increment_angle
+        #         else: angle = start[2] - i * increment_angle
+        #     else:
+        #         if start[2] < goal[2]: angle = start[2] - i * increment_angle
+        #         else: angle = start[2] + i * increment_angle
+        #
+        #     if angle >= 360: angle = angle - 360
+        #     if angle < 0: angle = angle + 360
+        #
+        #     position = (x,y,angle)
+        #     if self.collision_check(position):
+        #         return True
 
-            if start[1] < goal[1]: y = start[1] + i*increment_y
-            else: y = start[1] - i*increment_y
-
-            if range_angle < 180:
-                if start[2] < goal[2]: angle = start[2] + i * increment_angle
-                else: angle = start[2] - i * increment_angle
+        # nemoze prerotovat cez 0
+        for i in range(1, samples):
+            if start[0] < goal[0]:
+                x = start[0] + i * increment_x
             else:
-                if start[2] < goal[2]: angle = start[2] - i * increment_angle
-                else: angle = start[2] + i * increment_angle
+                x = start[0] - i * increment_x
 
-            if angle >= 360: angle = angle - 360
-            if angle < 0: angle = angle + 360
+            if start[1] < goal[1]:
+                y = start[1] + i * increment_y
+            else:
+                y = start[1] - i * increment_y
 
-            position = (x,y,angle)
+            if start[2] < goal[2]:
+                angle = start[2] + i * increment_angle
+            else:
+                angle = start[2] - i * increment_angle
+
+            position = (x, y, angle)
             if self.collision_check(position):
                 return True
 

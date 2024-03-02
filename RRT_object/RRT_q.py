@@ -32,7 +32,7 @@ obstacle = (525, 115, 130, 230, 0)
 
 # Moving Object - parameters
 center = (750, 250)
-width = 100
+width = 200
 height = 100
 angle = 0
 object = (center[0], center[1], width, height, angle)
@@ -48,10 +48,10 @@ object = (center[0], center[1], width, height, angle)
 # x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
 # x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 
-x_q_init = (0,2.5)
-x_q_goal = (3,1.57)
-x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
-x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
+x_q_init = (0,225)
+x_q_goal = (180,135)
+# x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
+# x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 print ("Goal:",x_q_goal)
 
 Q = np.array([(3, 1)])  # length of tree edges
