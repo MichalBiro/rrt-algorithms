@@ -88,6 +88,29 @@ def IK (pos):
 
     return q
 
+def diagonal(w,h):
+    d = math.sqrt(w**2+h**2)
+    alfa = math.atan2((w/2),(h/2))
+    alfa = math.degrees(alfa)
+    return d, alfa
+
+def point_in_circle(point,center):
+
+    radius = 445
+    distance = math.sqrt((point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2)
+    if distance < radius:
+        return True
+    else:
+        return False
+
+
+# p = (0,444)
+# c = (0,0)
+# x = point_in_circle(p,c)
+# print (x)
+#
+# [d,alfa]=diagonal(350,100)
+# print(d,alfa)
 # # start an goal - in 2D [xy]
 # x_init = (600, 100, 0)  # starting location
 # x_goal = (100, 300, 0)  # goal location

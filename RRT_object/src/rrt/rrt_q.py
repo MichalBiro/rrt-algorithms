@@ -24,6 +24,17 @@ class RRT_Q(RRTBase_Q):
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
         :return: list representation of path, dict representing edges of tree in form E[child] = parent
         """
+        # Can find way - check
+        # if self.diagonal(self.object[2],self.object[3]) > 370: # if diagonal of the object id bigger than 370mm - solution may not be found
+        #
+        #     # check possible prerotations - init and goal position
+        #
+        #     #iterate through PRE_ROT
+        #     # check if points of object are inside collision-free circle
+
+
+
+
 
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)

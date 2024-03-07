@@ -30,11 +30,11 @@ X_dimensions = np.array([q1_space,q2_space])  # dimensions of Search Space - x,y
 obstacle = (525, 115, 130, 230, 0)
 
 # Moving Object - parameters
-center = (750, 250)
-width = 200
-height = 100
-angle = 0
-object = (center[0], center[1], width, height, angle)
+object_center = (750, 275)
+object_width = 200
+object_height = 100
+object_angle = 0
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
 
 #start an goal - in 2D [xy]
 # x_init = (800, 200, 0)  # starting location
@@ -47,8 +47,12 @@ object = (center[0], center[1], width, height, angle)
 # x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
 # x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 
-x_q_init = (0,225)
-x_q_goal = (180,135)
+x_q_init = (40,235)
+x_q_goal = (150,100)
+x_init = FK(x_q_init)
+x_init = loc2glo(x_init)
+angle_loc_zero = x_init[2] # local zero for gripping object in the angle
+
 # x_q_init = (math.degrees(x_q_init[0]),math.degrees(x_q_init[1]))
 # x_q_goal = (math.degrees(x_q_goal[0]),math.degrees(x_q_goal[1]))
 print ("Goal:",x_q_goal)
@@ -102,9 +106,9 @@ for pos_q in path_sampling(path):
     pos_xy = FK(pos_q)
     pos_xy = loc2glo(pos_xy)
     center = (pos_xy[0], pos_xy[1])
-    angle = 360-pos_xy[2]
+    angle = 360-(pos_xy[2]-angle_loc_zero+object_angle)
     obstacle1 = RotatedRect(obstacle[0], obstacle[1], obstacle[2], obstacle[3], obstacle[4])
-    [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
+    [rotated_pts, intersection] = object_visualize(center,object_width,object_height, angle, obstacle1)
     # Draw a rectangle
     cv.polylines(img, [rotated_pts], isClosed=True, color=(255, 0, 100), thickness=2)
     cv.polylines(img2, [rotated_pts], isClosed=True, color=(0, 0, 0), thickness=1)
@@ -114,7 +118,7 @@ for pos_q in path_sampling(path):
 
     # draw robot arm
     robot_joints = robot_visualization(pos_q)
-    color = (0, 0, 0 )  # black color
+    color = (0, 0, 0)  # black color
     thickness = 3
     cv.line(img,robot_joints[0], robot_joints[1], color, thickness)
     cv.line(img,robot_joints[1], robot_joints[2], color, thickness)

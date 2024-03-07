@@ -99,7 +99,7 @@ class RRTBase(object):
         center = (x_new[0], x_new[1])
         width = self.object[2]
         height = self.object[3]
-        angle = x_new[2]
+        angle = 360-(x_new[2]+self.object[4])
         obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],
                                 self.obstacle[4])
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
@@ -203,6 +203,8 @@ class RRTBase(object):
         point = np.minimum(point, self.X.dimension_lengths[:, 1])
         return tuple(point)
 
+
+
     def linear_sampling_collision_check(self,start,goal):
         #samples = 20                        #number of position checked between start and goal
         increment = 10  #mm
@@ -265,3 +267,4 @@ class RRTBase(object):
                 return True
 
         return False
+

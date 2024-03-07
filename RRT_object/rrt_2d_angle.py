@@ -27,15 +27,15 @@ X_dimensions = np.array([(0, x), (0, y), (0,angle)])  # dimensions of Search Spa
 obstacle = (525, 115, 130, 230, 0) # real obstacle
 
 #start an goal
-x_init = (800, 250, 180)  # starting location
+x_init = (800, 180, 180)  # starting location
 x_goal = (250, 250, 180)#(100, 150, 0)  # goal location
 
 # Moving Object - parameters
-center = (x_init[0],x_init[1])
-width = 300
-height = 400
-angle = 0
-object = (center[0],center[1],width,height,angle)
+object_center = (x_init[0],x_init[1])
+object_width = 300
+object_height = 100
+object_angle = 0
+object = (object_center[0], object_center[1], object_width, object_height, object_angle)
 
 
 Q = np.array([(10, 5)])  # length of tree edges
@@ -83,9 +83,9 @@ img2 = np.copy(img)
 for pos in path_sampling(path):
 
     center = (pos[0],pos[1])
-    angle = pos[2]
+    angle = 360-(pos[2]+object_angle)
     obstacle1 = RotatedRect(obstacle[0],obstacle[1],obstacle[2],obstacle[3],obstacle[4])
-    [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
+    [rotated_pts, intersection] = object_visualize(center,object_width, object_height, angle, obstacle1)
     # Draw a rectangle
     cv.polylines(img, [rotated_pts], isClosed=True, color=(255, 0, 100), thickness=2)
     cv.polylines(img2, [rotated_pts], isClosed=True, color=(0, 0, 0), thickness=1)

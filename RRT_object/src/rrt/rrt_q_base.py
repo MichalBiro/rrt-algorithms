@@ -102,12 +102,14 @@ class RRTBase_Q(object):
     def collision_check(self, x_new):
         #transformacia z uhlov na suradnice xy
         x_new = self.q2xya(x_new)
+        x_init = self.q2xya(self.x_init)
+        angle_loc_zero = x_init[2]
 
         # funkcia na overenie kolizie objektu s prekazkou
         center = (x_new[0], x_new[1])
         width = self.object[2]
         height = self.object[3]
-        angle = 360-x_new[2]
+        angle = 360-(x_new[2]-angle_loc_zero+self.object[4])
         obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],
                                 self.obstacle[4])
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
@@ -216,6 +218,21 @@ class RRTBase_Q(object):
         xya = FK(q)  # from Q_space to XY_space
         xya = loc2glo(xya)
         return xya
+
+    def point_in_circle(self,point,center):
+
+        radius = 445
+        distance = math.sqrt((point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2)
+        if distance < radius:
+            return True
+        else:
+            return False
+
+    def diagonal(self,h, w):
+        d = math.sqrt(w ** 2 + h ** 2)
+        alfa = math.atan2((w / 2), (h / 2))
+        alfa = math.degrees(alfa)
+        return d #, alfa
 
     def linear_sampling_collision_check(self,start,goal):
 
