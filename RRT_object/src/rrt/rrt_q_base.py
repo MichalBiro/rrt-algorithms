@@ -3,6 +3,7 @@ import random
 
 import numpy as np
 import math
+import sys
 
 from src.rrt.tree import Tree
 from src.utilities.geometry import steer
@@ -99,7 +100,7 @@ class RRTBase_Q(object):
         self.samples_taken += 1
         return x_new, x_nearest
 
-    def collision_check(self, x_new):
+    def collision_check(self, x_new, pre_rot=0):
         #transformacia z uhlov na suradnice xy
         x_new = self.q2xya(x_new)
         x_init = self.q2xya(self.x_init)
@@ -109,18 +110,17 @@ class RRTBase_Q(object):
         center = (x_new[0], x_new[1])
         width = self.object[2]
         height = self.object[3]
-        angle = 360-(x_new[2]-angle_loc_zero+self.object[4])
-        obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],
-                                self.obstacle[4])
+        angle = 360-(x_new[2]-angle_loc_zero+self.object[4] + pre_rot)
+        obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],self.obstacle[4])
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
         # collision
         if len(intersection) != 0:
-            print("Collision !")
+            #print("Collision !")
             return True
         # out of bounds
         for points in rotated_pts:
             if points[0] < self.XY_dimensions[0][0] or points[0] > self.XY_dimensions[0][1] or points[1] < self.XY_dimensions[1][0] or points[1] > self.XY_dimensions[1][1]:
-                print("Out of searchspace !")
+                #print("Out of searchspace !")
                 return True
 
         return False
@@ -160,8 +160,8 @@ class RRTBase_Q(object):
         :return: path if possible, None otherwise
         """
         if self.can_connect_to_goal(0):
-            print("Can connect to goal")
-            print("Samples taken:",self.samples_taken)
+            #print("Can connect to goal")
+            #print("Samples taken:",self.samples_taken)
             self.connect_to_goal(0)
             return self.reconstruct_path(0, self.x_init, self.x_goal)
         #print("Could not connect to goal")
@@ -221,12 +221,29 @@ class RRTBase_Q(object):
 
     def point_in_circle(self,point,center):
 
-        radius = 445
+        radius = 445 # distance from obstacle to first joint of the arm
         distance = math.sqrt((point[0] - center[0]) ** 2 + (point[1] - center[1]) ** 2)
         if distance < radius:
             return True
         else:
             return False
+
+    def object_in_circle(self,object,angle):
+
+        xya = self.q2xya((90,180))
+        init_xya = self.q2xya(self.x_init)
+
+        center = (xya[0],xya[1])
+        angle = angle + (xya[2]-init_xya[2])
+        obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],self.obstacle[4])
+        [rotated_pts, intersection] = object_visualize(center, object[2], object[3], angle, obstacle1)
+
+        circle_center = (525,675) # y = 230(obstacle) + 85(base_link) + 360(link_1)
+        for point in rotated_pts:
+            if self.point_in_circle(point,circle_center)==False:
+                return False
+        return True
+
 
     def diagonal(self,h, w):
         d = math.sqrt(w ** 2 + h ** 2)
@@ -234,6 +251,52 @@ class RRTBase_Q(object):
         alfa = math.degrees(alfa)
         return d #, alfa
 
+    def poss_prerot_init(self, pos_q ,object):
+        pre_rot = []
+        rot = 0
+        increment = 1
+        angle = object[4]
+        # up from current angle
+        while angle < 360:
+            if self.collision_check(pos_q,rot) == True:
+                break
+            pre_rot.append(angle)
+            rot = rot + increment
+            angle = angle + increment
+
+
+        rot = 0
+        angle = object[4]-1
+        while angle >= 0:
+            if self.collision_check(pos_q, rot) == True:
+                break
+            pre_rot.append(angle)
+            rot = rot - increment
+            angle = angle - increment
+
+        return pre_rot
+    def poss_prerot_goal(self, pos_q ,object):
+        pre_rot = []
+        rot = 0
+        increment = 1
+        angle = object[4]
+        # up from current angle
+        while angle < 360:
+            if self.collision_check(pos_q,rot) == False:
+                pre_rot.append(angle)
+            rot = rot + increment
+            angle = angle + increment
+
+
+        rot = 0
+        angle = object[4]-1
+        while angle >= 0:
+            if self.collision_check(pos_q, rot) == False:
+                pre_rot.append(angle)
+            rot = rot - increment
+            angle = angle - increment
+
+        return pre_rot
     def linear_sampling_collision_check(self,start,goal):
 
         increment = 3  #degrees
@@ -260,4 +323,47 @@ class RRTBase_Q(object):
 
         return False
 
+    def pre_rot_sampling_collision_check(self,angle):
+        object_angle = self.object[4]
+        diff = abs(object_angle - angle)
+        rot = 0
+        inc = 3
+        while abs(rot) < diff:
+            if angle > object_angle:
+                rot = rot + inc
+            else:
+                rot = rot - inc
+            if self.collision_check(self.x_init, rot):
+                return False
+        return True
+
+    def pre_rot(self):
+        final_pre_rot = []
+        # check possible prerotations - init and goal position
+        init_pre_rot = self.poss_prerot_init(self.x_init, self.object)
+        goal_pre_rot = self.poss_prerot_goal(self.x_goal, self.object)
+        init_pre_rot = set(init_pre_rot)
+        goal_pre_rot = set(goal_pre_rot)
+        # combine 2 sets
+        possible_pre_rot = init_pre_rot.intersection(goal_pre_rot)
+        possible_pre_rot = list(possible_pre_rot)
+        min_diff = 360
+        # iterate through poss_pre_rot and find the smallest possible rotation
+        for angle in possible_pre_rot:
+            if self.object_in_circle(self.object,angle):  # and self.pre_rot_sampling_collision_check(angle): # check if points of object are inside collision-free circle
+                diff = abs(angle - self.object[4])
+                if diff < min_diff:
+                    final_pre_rot = angle
+                    min_diff = diff
+        #print("Pre rotation", final_pre_rot)
+        #print(self.object)
+        self.object = (self.object[0], self.object[1], self.object[2], self.object[3], final_pre_rot)
+        #print(self.object)
+        # if no solution found
+        if not final_pre_rot:
+            #print("No possible solution")
+            #sys.exit()
+            return
+
+        return final_pre_rot
 

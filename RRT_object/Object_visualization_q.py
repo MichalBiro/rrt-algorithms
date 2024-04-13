@@ -153,26 +153,26 @@ def path_sampling(path):
 
     return path_q
 
-robot_visualization((1,1.))
-
-# Create a white image
-img = np.full((300, 600, 3), 255, dtype=np.uint8)
-# Draw a diagonal blue line with thickness of 5 px
-# cv.line(img,(0,0),(20,30),(255,0,0),1)
-
-# ----------------------------------
-# prekazka
-cv.rectangle(img, (250, 100), (350, 300), (200, 255, 0), thickness=-1)
-# interpretacia pre prienik
-r1 = RotatedRect(300, 200, 100, 200, 0)
-
-# --------------------------------
-# Draw the rotated rectangle
-center = (550, 130)
-width = 20
-height = 100
-angle = 0
-[rotated_pts, intersection] = object_visualize(center, width, height, angle, r1)
+# robot_visualization((1,1.))
+#
+# # Create a white image
+# img = np.full((300, 600, 3), 255, dtype=np.uint8)
+# # Draw a diagonal blue line with thickness of 5 px
+# # cv.line(img,(0,0),(20,30),(255,0,0),1)
+#
+# # ----------------------------------
+# # prekazka
+# cv.rectangle(img, (250, 100), (350, 300), (200, 255, 0), thickness=-1)
+# # interpretacia pre prienik
+# r1 = RotatedRect(300, 200, 100, 200, 0)
+#
+# # --------------------------------
+# # Draw the rotated rectangle
+# center = (550, 130)
+# width = 20
+# height = 100
+# angle = 0
+# [rotated_pts, intersection] = object_visualize(center, width, height, angle, r1)
 # if len(intersection) != 0:
 #     print("EMPTY")
 #

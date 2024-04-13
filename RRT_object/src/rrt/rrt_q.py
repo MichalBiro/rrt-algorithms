@@ -1,4 +1,5 @@
 from src.rrt.rrt_q_base import RRTBase_Q
+
 import matplotlib.pyplot as plt
 import imageio
 import numpy as np
@@ -18,22 +19,19 @@ class RRT_Q(RRTBase_Q):
         """
         super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, object, obstacle, XY_dimensions)
 
+
     def rrt_search(self):
         """
         Create and return a Rapidly-exploring Random Tree, keeps expanding until can connect to goal
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
         :return: list representation of path, dict representing edges of tree in form E[child] = parent
         """
+        final_pre_rot = self.object[4]
         # Can find way - check
-        # if self.diagonal(self.object[2],self.object[3]) > 370: # if diagonal of the object id bigger than 370mm - solution may not be found
-        #
-        #     # check possible prerotations - init and goal position
-        #
-        #     #iterate through PRE_ROT
-        #     # check if points of object are inside collision-free circle
-
-
-
+        if self.diagonal(self.object[2],self.object[3]) > 370: # if diagonal of the object id bigger than 370mm - solution may not be found // 370 - 2*185 - distance from obstacle to 2nd joint
+            final_pre_rot = self.pre_rot()
+            if final_pre_rot is None:
+                return [],[]
 
 
         self.add_vertex(0, self.x_init)
@@ -41,7 +39,7 @@ class RRT_Q(RRTBase_Q):
 
         solution = self.check_solution()
         if solution[0]:
-            return solution[1]
+            return solution[1],final_pre_rot
 
 
         while True:
@@ -57,5 +55,5 @@ class RRT_Q(RRTBase_Q):
 
                     solution = self.check_solution()
                     if solution[0]:
-                        return solution[1]
+                        return solution[1],final_pre_rot
 

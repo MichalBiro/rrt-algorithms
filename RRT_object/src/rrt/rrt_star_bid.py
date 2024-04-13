@@ -8,7 +8,7 @@ from src.rrt.rrt_star import RRTStar
 
 
 class RRTStarBidirectional(RRTStar):
-    def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, rewire_count=None):
+    def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, rewire_count=None,object=None, obstacle=None):
         """
         Bidirectional RRT* Search
         :param X: Search Space
@@ -20,7 +20,7 @@ class RRTStarBidirectional(RRTStar):
         :param prc: probability of checking whether there is a solution
         :param rewire_count: number of nearby vertices to rewire
         """
-        super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, rewire_count)
+        super().__init__(X, Q, x_init, x_goal, max_samples, r, prc, rewire_count,object, obstacle)
         self.sigma_best = None  # best solution thus far
         self.swapped = False
 
@@ -35,7 +35,7 @@ class RRTStarBidirectional(RRTStar):
         """
         for c_near, x_near in L_near:
             c_tent = c_near + path_cost(self.trees[a].E, self.x_init, x_new)
-            if c_tent < self.c_best and self.X.collision_free(x_near, x_new, self.r):
+            if c_tent < self.c_best and self.linear_sampling_collision_check(x_near,x_new) == False:
                 self.trees[b].V_count += 1
                 self.trees[b].E[x_new] = x_near
                 self.c_best = c_tent

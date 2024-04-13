@@ -70,23 +70,40 @@ def FK (q):
 
 
 #inverse kinemaics
-def IK (pos):
+def IK(pos):
 
+    pos = glo2loc(pos)
     x=pos[0]
     y=pos[1]
     angle = pos[2]
 
-    D = (x**2 + y**2 - l1**2 -l2**2)/(2*l1*l2)
+    d = (x**2 + y**2 - l1**2 - l2**2)/(2*l1*l2)
+    if d > 1 or d < -1:
+        print("The target is not reachable.")
+        return
 
-    q2 = math.atan2(math.sqrt(1-D**2),D)
-    gama = math.atan2(y,x)
-    beta = math.atan2(l2*math.sin(q2),l1+l2*math.cos(q2))
+    # Calculate two possible solutions: elbow up and elbow down
+    # elbow up
+    q2 = math.atan2(math.sqrt(1 - d ** 2), d)  # first angle
+    q1 = math.atan2(y, x) - math.atan2(l2 * math.sin(q2), l1 + l2 * math.cos(q2))  # second angle
+    if q2 < 0: q2 = q2+6.283
+    q_up = (q1,q2)
 
-    q1 = gama - beta
+    # elbow down
+    q2 = math.atan2(-math.sqrt(1 - d ** 2), d)  # first angle
+    q1 = math.atan2(y, x) - math.atan2(l2 * math.sin(q2), l1 + l2 * math.cos(q2))  # second angle
+    if q2 < 0: q2 = q2+6.283
+    q_down = (q1,q2)
 
-    q = (q1,q2,angle)
+    # q2 = math.atan2(math.sqrt(1-d**2),d)
+    # gama = math.atan2(y,x)
+    # beta = math.atan2(l2*math.sin(q2),l1+l2*math.cos(q2))
+    # q1 = gama - beta
 
-    return q
+
+    q = (q1, q2, angle)
+
+    return q_up, q_down
 
 def diagonal(w,h):
     d = math.sqrt(w**2+h**2)
