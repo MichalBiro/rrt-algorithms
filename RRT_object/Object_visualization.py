@@ -36,8 +36,6 @@ def convert_rectangle(rectangle):
     rect_pts = (
         center[0] - width // 2, center[1] - height // 2,
         center[0] + width // 2, center[1] + height // 2)
-
-
     return rect_pts
 
 
@@ -50,7 +48,6 @@ def object_visualize(center, width, height, angle, obstacle):
     # height = 100
     # angle = 70
     # interpretacia pre prienik
-    x = Polygon([(0, 0), (0, 1), (1, 1), (1, 0)])
     r1 = obstacle
     r2 = RotatedRect(center[0], center[1], width, height, angle)
 

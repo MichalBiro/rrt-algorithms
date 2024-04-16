@@ -99,10 +99,11 @@ class RRTBase(object):
         center = (x_new[0], x_new[1])
         width = self.object[2]
         height = self.object[3]
-        angle = 360-(x_new[2]+self.object[4])
+        angle = 360-x_new[2]
         obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],
                                 self.obstacle[4])
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
+        #print(self.samples_taken)
         # collision
         if len(intersection) != 0:
             #print("Collision !")
@@ -188,7 +189,7 @@ class RRTBase(object):
     def check_solution(self):
         # probabilistically check if solution found
         if (self.prc and random.random() < self.prc) or self.samples_taken <=1:
-            print("Checking if can connect to goal at", str(self.samples_taken), "samples")
+            #print("Checking if can connect to goal at", str(self.samples_taken), "samples")
             path = self.get_path()
             if path is not None:
                 return True, path
