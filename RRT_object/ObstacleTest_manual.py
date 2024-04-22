@@ -38,7 +38,7 @@ def redraw_image():
     pos_xy = FK(pos_q)
     pos_xy = loc2glo(pos_xy)
     center = (pos_xy[0], pos_xy[1])
-    rotation = 360 - pos_xy[2] - angle
+    rotation = 360 - angle - pos_xy[2]
     [rotated_pts, intersection] = object_visualize(center, height, width, rotation, obstacle1)
     # draw intersection between 2 objects
     cv.polylines(img, [intersection], isClosed=True, color=(0, 0, 255), thickness=2)

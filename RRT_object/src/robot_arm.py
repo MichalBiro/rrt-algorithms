@@ -53,7 +53,6 @@ def FK (q):
     q = (math.radians(q[0]), math.radians(q[1]))
     q1 = q[0]
     q2 = q[1]
-    #angle = q[2]
 
     x1 = l1 * math.cos(q1)
     y1 = l1 * math.sin(q1)
@@ -63,11 +62,10 @@ def FK (q):
 
     x = x1 + x2
     y = y1 + y2
-    angle = q1+q2#+angle
+    angle = q1+q2
     angle = math.degrees(angle)
     pos = (x,y,angle)
     return pos
-
 
 #inverse kinemaics
 def IK(pos):

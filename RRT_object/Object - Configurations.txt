@@ -1,0 +1,193 @@
+----------------------------------------------------------
+LEGEND
+
+# position | edge - solution 
+position:
+	C - center
+	L - left
+	R - right
+	D - down
+	U - up
+__________________________________________________________
+
+=== height > widht ===
+----------------------------------------------------------
+# CC | NO - POSSIBLE
+object_center = (750, 275)
+object_width = 100
+object_height = 400
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (60,240)
+x_q_goal = (125,110)
+----------------------------------------------------------
+# DL | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 180
+object_height = 420
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (20,208)
+x_q_goal = (115,130)
+----------------------------------------------------------
+# DR | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 160
+object_height = 347   
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (30,260)
+x_q_goal = (115,130)
+----------------------------------------------------------
+# DR | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 250
+object_height = 400   
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (30,240)
+x_q_goal = (115,130)
+----------------------------------------------------------
+# DC | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 150
+object_height = 400
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (30,240)
+x_q_goal = (115,130)
+----------------------------------------------------------
+## CR | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 115
+object_height = 400
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (45,265)
+x_q_goal = (115,130)
+----------------------------------------------------------
+## CC | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 180 # 150
+object_height = 400 # 435
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (55,240)
+x_q_goal = (115,130)
+----------------------------------------------------------
+\\\***\\\
+## CL | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 220 
+object_height = 480 
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (60,210)
+x_q_goal = (115,130)
+----------------------------------------------------------
+## UR | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 150  # 180
+object_height = 450 # 400
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (60,270)
+x_q_goal = (115,130)
+----------------------------------------------------------
+\\\****\\\
+## UC | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 150  #270
+object_height = 470 #400
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (75,245)
+x_q_goal = (115,130)
+----------------------------------------------------------
+\\\*****\\\
+## UL | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 150  #270
+object_height = 480 #400
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (90,225)
+x_q_goal = (115,130)
+
+
+____________________________________________________________
+
+=== width > height ===
+----------------------------------------------------------
+# D | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 450  #400
+object_height = 150 #230
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (10,247)
+x_q_goal = (115,125)
+----------------------------------------------------------
+\\\*****\\\
+# D/C | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 450  #400
+object_height = 150 #270
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (25,238)
+x_q_goal = (115,125)
+----------------------------------------------------------
+# C | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 450  #400
+object_height = 150 #260
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (55,235)
+x_q_goal = (115,125)
+----------------------------------------------------------
+# C/U | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 440  #400
+object_height = 150 #240
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (75,245)
+x_q_goal = (115,125)
+----------------------------------------------------------
+# C/U | EDGE - POSSIBLE
+object_center = (750, 275)
+object_width = 350  #350
+object_height = 150 #240
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (85,265)
+x_q_goal = (115,125)
+
+# C/U | EDGE - POSSIBLE
+# SAME XY_POS / DIFFERENT JOINTS_POS
+object_center = (750, 275)
+object_width = 470  #400
+object_height = 150 #210
+object_angle = 180
+object = (object_center[0], object_center[1],object_width, object_height, object_angle)
+
+x_q_init = (10,95)
+x_q_goal = (115,125)

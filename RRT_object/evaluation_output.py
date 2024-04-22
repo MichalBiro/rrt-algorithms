@@ -5,7 +5,7 @@
 import csv
 
 # Load output data
-file_path = "data_files/2DOF_output_data.csv" # Define the file name
+file_path = "data_files/3DOF_Q_output_data.csv" # Define the file name
 output_data = []
 with open(file_path, 'r', newline='') as csvfile:
     reader = csv.reader(csvfile)
@@ -40,13 +40,14 @@ object_size_list = sorted(list(set(object_size_data)))
 
 object_size_data = []
 global_time = 0
-for i,row in enumerate(input_data):
-    r_output = output_data[i]
+for i,r_output in enumerate(output_data[:]):
+    row = input_data[i]
     # Extract the values at the 3rd and 4th positions
     w = row[3]  # 3rd position (index 2)
     h = row[4]  # 4th position (index 3)
     sol = int(r_output[1])
     time = r_output[2]
+    print(i)
 
     # Append the values to the list
     object_size_data.append((w, h,sol))
@@ -59,17 +60,20 @@ for w,h in object_size_list:
     success = object_size_data.count((w,h,1))
     failure = object_size_data.count((w, h, 0))
     num_cases = success + failure
-    success_rate = round((success/num_cases)*100,2)
+    if num_cases == 0:
+        success_rate = 0
+    else:
+        success_rate = round((success/num_cases)*100,2)
     #print(w,h,success,failure,num_cases,success_rate)
     result.append([w,h,success,failure,num_cases,success_rate])
     global_success += success
     all_cases += num_cases
 
-print("Number of successful cases: ",global_success)
+print("Number of successful cases: ",global_success,"/",all_cases)
 print("Success rate in all cases: ",(global_success/all_cases)*100)
 print("Average time for finding path: ", round(global_time/all_cases,2))
 # Define the file name
-file_path = "data_files/result_3DOF.csv"
+file_path = "data_files/result_test.csv"
 
 # Write the array to the CSV file
 with open(file_path, 'w', newline='') as csvfile:

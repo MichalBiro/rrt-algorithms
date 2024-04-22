@@ -13,7 +13,7 @@ class Plot(object):
         Create a plot
         :param filename: filename
         """
-        self.filename = "/home/michal/Skola-ZS23/diplomovka" + filename + ".html"
+        self.filename = "C:/Users/micha/Documents/Skola/FEI24/ZS/diplomovka/python/rrt-algorithms" + filename + ".html"
         self.data = []
         self.layout = {'title': 'Plot',
                        'showlegend': False

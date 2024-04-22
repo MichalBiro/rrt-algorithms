@@ -8,7 +8,7 @@ import csv
 import numpy as np
 
 # Load output data
-file_path = "data_files/result_3DOF.csv" # Define the file name
+file_path = "data_files/result_test.csv" # Define the file name
 result_data = []
 with open(file_path, 'r', newline='') as csvfile:
     reader = csv.reader(csvfile)
@@ -51,7 +51,7 @@ plt.colorbar(scatter, label='success rate [%]')
 # Set labels and title
 plt.xlabel('Width')
 plt.ylabel('Height')
-plt.title('')
+plt.title('3DOF_xya')
 
 # Show the plot
 plt.show()

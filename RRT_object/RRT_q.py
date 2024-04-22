@@ -40,7 +40,7 @@ ID = 0 #for saving data
 for input in data:
     input = data[0]
     ID = ID + 1
-    pos = (input[1],input[2],180)
+    pos = (input[1],input[2],input[5])
     [q_up, q_down] = IK(pos)
     q_down = [math.degrees(q_down[0]), math.degrees(q_down[1])]
 
@@ -69,7 +69,7 @@ for input in data:
 
     #x_q_init = (input[0],input[1])
     x_q_init = (q_down[0], q_down[1])
-    x_q_goal = (115,130)
+    x_q_goal = (124,125)
 
     x_init = FK(x_q_init)
     x_init = loc2glo(x_init)

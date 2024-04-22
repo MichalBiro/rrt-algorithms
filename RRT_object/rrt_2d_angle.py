@@ -13,13 +13,13 @@ from src. robot_arm import IK,glo2loc,q_glob2q_robot
 from Object_visualization import RotatedRect, object_visualize,convert_rectangle, path_sampling
 
 # create empty file for outputs
-output_file = "data_files/3DOF_output_data3.csv"
-output_path_file='data_files/3DOF_output_data_path3.csv'
-# # Open the file in write mode to create a new empty file
-with open(output_file, 'w', newline='') as csvfile:
-    pass
-with open(output_path_file, 'w', newline='') as csvfile:
-    pass
+# output_file = "data_files/3DOF_output_data3.csv"
+# output_path_file='data_files/3DOF_output_data_path3.csv'
+# # # Open the file in write mode to create a new empty file
+# with open(output_file, 'w', newline='') as csvfile:
+#     pass
+# with open(output_path_file, 'w', newline='') as csvfile:
+#     pass
 
 # Record the start time
 glo_start_time = time.time()
@@ -37,7 +37,7 @@ with open(file_path, 'r', newline='') as csvfile:
 
 ID = 0  # for saving data
 for input in data:
-    #input = data[0]
+    input = data[11089]
     ID = ID + 1
 
     # Record the start time
@@ -83,81 +83,81 @@ for input in data:
     runtime = round(end_time - start_time,4)
     print("Program runtime:", runtime, "seconds")
 
-    # ----------------------------------------------------------------------
-    # OUTPUT - zapisanie logov
-    if path is None:
-        path = []
-
-    if len(path) == 0:
-        solution = 0
-        output_data = [ID, solution, runtime, 0]
-    else:
-        solution = 1
-        output_data = [ID, solution, runtime]
-
-    print(round((ID / len(data)) * 100, 2), "%")
-    print("ID - ", ID, "   | sol =", solution)
-    # Append new data to the existing CSV file
-    with open(output_file, 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerow([output_data[0]] + list(output_data[1:]))
-    # print("New data has been appended to", output_file)
-
-    with open(output_path_file, 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        flattened_path = [round(item, 2) for sublist in path for item in sublist]
-        flattened_path.insert(0, ID)  # add ID
-        writer.writerow(flattened_path)
-    # print("Data saved to data.csv")
-
-    # STOP the time
-    glo_end_time = time.time()
-    print("Global time of the proces", round((glo_end_time - glo_start_time) / 60), "min ",
-          round(glo_end_time - glo_start_time, 2) % 60, " sec")
-
-    if solution == 0: continue
+    # # ----------------------------------------------------------------------
+    # # OUTPUT - zapisanie logov
+    # if path is None:
+    #     path = []
+    #
+    # if len(path) == 0:
+    #     solution = 0
+    #     output_data = [ID, solution, runtime, 0]
+    # else:
+    #     solution = 1
+    #     output_data = [ID, solution, runtime]
+    #
+    # print(round((ID / len(data)) * 100, 2), "%")
+    # print("ID - ", ID, "   | sol =", solution)
+    # # Append new data to the existing CSV file
+    # with open(output_file, 'a', newline='') as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     writer.writerow([output_data[0]] + list(output_data[1:]))
+    # # print("New data has been appended to", output_file)
+    #
+    # with open(output_path_file, 'a', newline='') as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     flattened_path = [round(item, 2) for sublist in path for item in sublist]
+    #     flattened_path.insert(0, ID)  # add ID
+    #     writer.writerow(flattened_path)
+    # # print("Data saved to data.csv")
+    #
+    # # STOP the time
+    # glo_end_time = time.time()
+    # print("Global time of the proces", round((glo_end_time - glo_start_time) / 60), "min ",
+    #       round(glo_end_time - glo_start_time, 2) % 60, " sec")
+    #
+    # if solution == 0: continue
     #----------------------------------------------------------------------
-    # # PLOT in OpenCV
-    # # Create a white image
-    # img = np.full((y, x, 3), 255, dtype=np.uint8)
-    #
-    # # prekazka
-    # rect_points = convert_rectangle(obstacle)
-    # rect_color = (200,255,0)
-    # cv.rectangle(img,(rect_points[0],rect_points[1]),(rect_points[2],rect_points[3]),rect_color,thickness=-1)
-    #
-    # # Draw the rotated rectangle
-    # frames = [] # create GIF
-    #
-    # img2 = np.copy(img)
-    # for pos in path_sampling(path):
-    #
-    #     center = (pos[0],pos[1])
-    #     angle = 360-pos[2]
-    #     obstacle1 = RotatedRect(obstacle[0],obstacle[1],obstacle[2],obstacle[3],obstacle[4])
-    #     [rotated_pts, intersection] = object_visualize(center,object_width, object_height, angle, obstacle1)
-    #     # Draw a rectangle
-    #     cv.polylines(img, [rotated_pts], isClosed=True, color=(255, 0, 100), thickness=2)
-    #     cv.polylines(img2, [rotated_pts], isClosed=True, color=(0, 0, 0), thickness=1)
-    #
-    #     # draw intersection between 2 objects
-    #     cv.polylines(img, [intersection], isClosed=True, color=(0, 0, 255), thickness=2)
-    #
-    #     if len(intersection) != 0:
-    #         print ("Collision !")
-    #
-    #     # otocenie obrazka - zrkadlovo y
-    #     img = cv.flip(img, 0)
-    #     frames.append(img) # GIF
-    #     cv.imshow("image",img)
-    #     cv.waitKey()
-    #
-    #     #reset picture
-    #     img = np.full((y, x, 3), 255, dtype=np.uint8)
-    #     cv.rectangle(img,(300,0),(600,400),(200,255,0),thickness=-1)
-    #
-    #     #keeping tracks
-    #     img = np.copy(img2)
+    # PLOT in OpenCV
+    # Create a white image
+    img = np.full((y, x, 3), 255, dtype=np.uint8)
+
+    # prekazka
+    rect_points = convert_rectangle(obstacle)
+    rect_color = (200,255,0)
+    cv.rectangle(img,(rect_points[0],rect_points[1]),(rect_points[2],rect_points[3]),rect_color,thickness=-1)
+
+    # Draw the rotated rectangle
+    frames = [] # create GIF
+
+    img2 = np.copy(img)
+    for pos in path_sampling(path):
+
+        center = (pos[0],pos[1])
+        angle = 360-pos[2]
+        obstacle1 = RotatedRect(obstacle[0],obstacle[1],obstacle[2],obstacle[3],obstacle[4])
+        [rotated_pts, intersection] = object_visualize(center,object_width, object_height, angle, obstacle1)
+        # Draw a rectangle
+        cv.polylines(img, [rotated_pts], isClosed=True, color=(255, 0, 100), thickness=2)
+        cv.polylines(img2, [rotated_pts], isClosed=True, color=(0, 0, 0), thickness=1)
+
+        # draw intersection between 2 objects
+        cv.polylines(img, [intersection], isClosed=True, color=(0, 0, 255), thickness=2)
+
+        if len(intersection) != 0:
+            print ("Collision !")
+
+        # otocenie obrazka - zrkadlovo y
+        img = cv.flip(img, 0)
+        frames.append(img) # GIF
+        cv.imshow("image",img)
+        cv.waitKey()
+
+        #reset picture
+        img = np.full((y, x, 3), 255, dtype=np.uint8)
+        cv.rectangle(img,(300,0),(600,400),(200,255,0),thickness=-1)
+
+        #keeping tracks
+        img = np.copy(img2)
 
     ##path in q1,q2 rotations of robot arm joints
     # print (path)
@@ -177,3 +177,12 @@ for input in data:
     #         print("Adding frame to GIF file")
     #         rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     #         writer.append_data(rgb_frame)
+
+    # plot
+    plot = Plot("rrt_3d")
+    plot.plot_tree(X, rrt.trees)
+    if path is not None:
+        plot.plot_path(X, path)
+    plot.plot_start(X, x_init)
+    plot.plot_goal(X, x_goal)
+    plot.draw(auto_open=True)
