@@ -21,6 +21,10 @@ angle = 360
 
 X_dimensions = np.array([(0, x), (0, y), (0,angle)])  # dimensions of Search Space - x,y,angle
 
+# obstacles for Searchspace
+Obstacles = np.array([(460,0,0,590,230,angle)])
+
+
 # obstacles - for intesection
 #obstacle = (400,5,100,100,0) #(400,175,300,400,0)
 obstacle = (525, 115, 130, 230, 0) # real obstacle
@@ -31,20 +35,30 @@ x_goal = (200,350,180)  # goal location
 
 # Moving Object - parameters
 object_center = (x_init[0],x_init[1])
-object_width = 350
+object_width = 250
 object_height = 630
 object_angle = 0
 object = (object_center[0], object_center[1],object_width, object_height, object_angle)
 
+# obstacles for Searchspace
+x_offset = object_width
+y_offset = object_width
+Obstacles = np.array([(460-x_offset/2, 0, 0, 590+x_offset/2, 230+y_offset/2, angle),
+                      (0,0,0,x_offset/2,y,angle),
+                      (x-x_offset/2,0,0,x,y,angle),
+                      (x_offset/2,745-y_offset/2,0,x-x_offset/2,y,angle),
+                      (x_offset/2,0,0,460-x_offset/2,y_offset/2,angle),
+                      (590+x_offset/2,0,0,x-x_offset/2,y_offset/2,angle)
+                      ])
 
 Q = np.array([(10,5)])  # length of tree edges
 r = 1  # length of smallest edge to check for intersection with obstacles
-max_samples = 3000  # max number of samples to take before timing out
+max_samples = 2000  # max number of samples to take before timing out
 rewire_count = 10  # optional, number of nearby branches to rewire
 prc = 0.1  # probability of checking for a connection to goal
 
 # create Search Space
-X = SearchSpace(X_dimensions)
+X = SearchSpace(X_dimensions, Obstacles)
 
 # create rrt_search
 rrt = RRTStar(X, Q, x_init, x_goal, max_samples, r, prc, rewire_count,object, obstacle)
@@ -128,5 +142,13 @@ for pos in path_sampling(path):
 #         rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
 #         writer.append_data(rgb_frame)
 
-
+# plot
+plot = Plot("rrt_3d")
+plot.plot_tree(X, rrt.trees)
+if path is not None:
+    plot.plot_path(X, path)
+plot.plot_obstacles(X, Obstacles)
+plot.plot_start(X, x_init)
+plot.plot_goal(X, x_goal)
+plot.draw(auto_open=True)
 

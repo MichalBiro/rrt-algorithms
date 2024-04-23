@@ -39,7 +39,7 @@ with open(file_path, 'r', newline='') as csvfile:
 
 ID = 0 #for saving data
 for input in data:
-    input = data[1000]
+    input = data[5804]
     ID = ID + 1
     pos = (input[1],input[2],input[5])
 
@@ -92,7 +92,7 @@ for input in data:
 
     # create rrt_search
     rrt = RRT_Q(X, Q, x_q_init, x_q_goal, max_samples, r, prc, object, obstacle, XY_dimensions)
-    path = rrt.rrt_search()
+    [path,Obstacles] = rrt.rrt_search()
 
     # Record the end time
     end_time = time.time()
@@ -214,6 +214,7 @@ for input in data:
     plot.plot_tree(X, rrt.trees)
     if path is not None:
         plot.plot_path(X, path)
+    plot.plot_obstacles(X, Obstacles)
     plot.plot_start(X, x_q_init)
     plot.plot_goal(X, x_q_goal)
     plot.draw(auto_open=True)

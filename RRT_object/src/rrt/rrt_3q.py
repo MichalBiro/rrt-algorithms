@@ -3,6 +3,7 @@ from src.rrt.rrt_3q_base import RRTBase_Q
 import matplotlib.pyplot as plt
 import imageio
 import numpy as np
+import time
 
 
 class RRT_Q(RRTBase_Q):
@@ -26,6 +27,9 @@ class RRT_Q(RRTBase_Q):
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
         :return: list representation of path, dict representing edges of tree in form E[child] = parent
         """
+        # Record the start time
+        start_time = time.time()
+        min_time = 30
 
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
@@ -40,6 +44,14 @@ class RRT_Q(RRTBase_Q):
                 for i in range(q[1]):  # iterate over number of edges of given length to add
                     x_new, x_nearest = self.new_and_near(0, q)
 
+                    # Calculate the runtime
+                    end_time = time.time()
+                    proces_time = round(end_time - start_time, 4)
+                    # stop program
+                    if proces_time > min_time:
+                        print("Time exceeded ", min_time, " second!")
+                        return [],[]
+
                     if x_new is None:
                         continue
 
@@ -48,5 +60,5 @@ class RRT_Q(RRTBase_Q):
 
                     solution = self.check_solution()
                     if solution[0]:
-                        return solution[1]
+                        return solution[1],self.Obstacles
 

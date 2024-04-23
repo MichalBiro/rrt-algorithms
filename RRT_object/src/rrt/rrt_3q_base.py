@@ -9,6 +9,7 @@ from src.rrt.tree import Tree
 from src.utilities.geometry import steer
 from src.robot_arm import FK, glo2loc, loc2glo
 from Object_visualization_q import RotatedRect, object_visualize
+from src.search_space.search_space import SearchSpace
 
 
 class RRTBase_Q(object):
@@ -36,6 +37,8 @@ class RRTBase_Q(object):
         self.XY_dimensions = XY_dimensions
         self.trees = []  # list of all trees
         self.add_tree()  # add initial tree
+        self.Obstacles = [(0,0,0,1,1,1)]
+        self.obstacle_size = 1
 
     def add_tree(self):
         """
@@ -93,7 +96,7 @@ class RRTBase_Q(object):
         x_new = self.bound_point(steer(x_nearest, x_rand, q[0]))
 
         # check if new point is in X_free and not already in V
-        if not self.trees[0].V.count(x_new) == 0 or self.collision_check(x_new) == True:
+        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new) or self.collision_check(x_new) == True:
             return None, None
 
 
@@ -113,9 +116,13 @@ class RRTBase_Q(object):
         angle = 360-(x_new[2] + x_xya[2] - angle_loc_zero + self.object[4])
         obstacle1 = RotatedRect(self.obstacle[0], self.obstacle[1], self.obstacle[2], self.obstacle[3],self.obstacle[4])
         [rotated_pts, intersection] = object_visualize(center, width, height, angle, obstacle1)
+
         # collision
         if len(intersection) != 0:
             #print("Collision !")
+            obstacle = (x_new[0]-self.obstacle_size,x_new[1]-self.obstacle_size,x_new[2]-self.obstacle_size,x_new[0]+self.obstacle_size,x_new[1]+self.obstacle_size,x_new[2]+self.obstacle_size)
+            self.add_obstacle(obstacle)
+
             return True
         # out of bounds
         for points in rotated_pts:
@@ -251,4 +258,11 @@ class RRTBase_Q(object):
 
         return False
 
-
+    def add_obstacle(self,obstacle):
+        # Append the new data to the list
+        self.Obstacles.append(obstacle)
+        # Convert the list back to a NumPy array
+        Obstacles_new = np.array(self.Obstacles)
+        X_dimensions = np.array([(0,self.X.dimension_lengths[0, 1]),(0,self.X.dimension_lengths[1, 1]),(0,self.X.dimension_lengths[2, 1])])
+        # update Search Space
+        self.X = SearchSpace(X_dimensions, Obstacles_new)

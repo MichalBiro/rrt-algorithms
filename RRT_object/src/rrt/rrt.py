@@ -2,6 +2,7 @@ from src.rrt.rrt_base import RRTBase
 import matplotlib.pyplot as plt
 import imageio
 import numpy as np
+import time
 
 
 class RRT(RRTBase):
@@ -24,6 +25,10 @@ class RRT(RRTBase):
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
         :return: list representation of path, dict representing edges of tree in form E[child] = parent
         """
+        # Record the start time
+        start_time = time.time()
+        min_time = 5
+
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
 
@@ -36,6 +41,13 @@ class RRT(RRTBase):
             for q in self.Q:  # iterate over different edge lengths until solution found or time out
                 for i in range(q[1]):  # iterate over number of edges of given length to add
                     x_new, x_nearest = self.new_and_near(0, q)
+
+                    # Calculate the runtime
+                    end_time = time.time()
+                    proces_time = round(end_time - start_time, 4)
+                    if proces_time > min_time:
+                        print("Time exceeded ",min_time," second!")
+                        return []
 
                     if x_new is None:
                         continue

@@ -88,7 +88,7 @@ class RRTBase(object):
         x_nearest = self.get_nearest(tree, x_rand)
         x_new = self.bound_point(steer(x_nearest, x_rand, q[0]))
         # check if new point is in X_free and not already in V
-        if not self.trees[0].V.count(x_new) == 0 or self.collision_check(x_new) == True:
+        if not self.trees[0].V.count(x_new) == 0 or not self.X.obstacle_free(x_new) or self.collision_check(x_new) == True:
             return None, None
 
         self.samples_taken += 1
