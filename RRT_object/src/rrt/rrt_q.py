@@ -3,7 +3,7 @@ from src.rrt.rrt_q_base import RRTBase_Q
 import matplotlib.pyplot as plt
 import imageio
 import numpy as np
-
+import time
 
 class RRT_Q(RRTBase_Q):
     def __init__(self, X, Q, x_init, x_goal, max_samples, r, prc=0.01, object=None, obstacle=None, XY_dimensions=None):
@@ -26,6 +26,10 @@ class RRT_Q(RRTBase_Q):
         https://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
         :return: list representation of path, dict representing edges of tree in form E[child] = parent
         """
+        # Record the start time
+        start_time = time.time()
+        min_time = 30
+
         final_pre_rot = self.object[4]
         # Can find way - check
         if self.diagonal(self.object[2],self.object[3]) > 370: # if diagonal of the object id bigger than 370mm - solution may not be found // 370 - 2*185 - distance from obstacle to 2nd joint
@@ -46,6 +50,14 @@ class RRT_Q(RRTBase_Q):
             for q in self.Q:  # iterate over different edge lengths until solution found or time out
                 for i in range(q[1]):  # iterate over number of edges of given length to add
                     x_new, x_nearest = self.new_and_near(0, q)
+
+                    # Calculate the runtime
+                    end_time = time.time()
+                    proces_time = round(end_time - start_time, 4)
+                    # stop program
+                    if proces_time > min_time:
+                        print("Time exceeded ", min_time, " second!")
+                        return [], []
 
                     if x_new is None:
                         continue

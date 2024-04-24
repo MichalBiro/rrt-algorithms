@@ -10,36 +10,60 @@ import imageio
 
 from src.rrt.rrt_q import RRT_Q
 from src.search_space.search_space import SearchSpace
+from src.utilities.plotting import Plot
 from src.robot_arm import FK,loc2glo,glo2loc,IK
 from Object_visualization_q import RotatedRect, object_visualize, convert_rectangle, path_sampling, robot_visualization
 
-# # create empty file for outputs
-# output_file = "data_files/output_data2.csv"
-# output_path_file='data_files/output_data_path2.csv'
-# # # Open the file in write mode to create a new empty file
-# with open(output_file, 'w', newline='') as csvfile:
-#     pass
-# with open(output_path_file, 'w', newline='') as csvfile:
-#     pass
-
+# create empty file for outputs
+output_file = "data_files/2DOF_output_data3-TEST.csv"
+output_path_file = 'data_files/2DOF_output_data_path3-TEST.csv'
+gif_file = "Test.gif"
 # Record the start time
 glo_start_time = time.time()
 
-# Load input data
-file_path = "data_files/input.csv" # Define the file name
-data = []
-with open(file_path, 'r', newline='') as csvfile:
-    reader = csv.reader(csvfile)
-    for row in reader:
-        # Convert each element in the row from string to integer
-        row = [int(x) for x in row]
-        # Append the row to the data list
-        data.append(row)
+def main():
 
-ID = 0 #for saving data
-for input in data:
-    input = data[0]
-    ID = ID + 1
+    #files_declaration()
+    data = input_data_load()
+
+    ID = 0  # for saving data
+    for input in data:
+        input = data[1000]
+        ID = ID + 1
+        [path, pre_rot, runtime, solution, obstacle, object, rrt, X, x_q_init, x_q_goal, x_search_space, y_search_space, object, angle_loc_zero] = path_finding_algorithm(input)
+
+        save_data(path, pre_rot, ID, runtime, solution, data, object)
+
+        if solution == 0:
+            continue
+
+        #frames = path_visualize(path, pre_rot, object, obstacle, x_search_space, y_search_space, angle_loc_zero)
+        #save_gif(frames)
+        #plot_SearchSpace(path, X, x_q_init, x_q_goal, rrt)
+
+def files_declaration():
+    # # Open the file in write mode to create a new empty file
+    with open(output_file, 'w', newline='') as csvfile:
+        pass
+    with open(output_path_file, 'w', newline='') as csvfile:
+        pass
+
+
+def input_data_load():
+    # Load input data
+    file_path = "data_files/input.csv"# Define the file name
+    data = []
+    with open(file_path, 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            # Convert each element in the row from string to integer
+            row = [int(x) for x in row]
+            # Append the row to the data list
+            data.append(row)
+    return data
+
+
+def path_finding_algorithm(input):
     pos = (input[1],input[2],input[5])
     [q_up, q_down] = IK(pos)
     q_down = [math.degrees(q_down[0]), math.degrees(q_down[1])]
@@ -51,9 +75,9 @@ for input in data:
     q1_space = (0,180)  # degrees
     q2_space = (0,360)  # degrees
     #search space 2D [x,y]
-    x =(0,1050) #1050
-    y =(0,745) #745
-    XY_dimensions = (x,y)
+    x_search_space =1050#1050
+    y_search_space =745 #745
+    XY_dimensions = (x_search_space,y_search_space)
 
     X_dimensions = np.array([q1_space,q2_space])  # dimensions of Search Space - x,y,angle
 
@@ -95,46 +119,50 @@ for input in data:
     # Calculate the runtime
     runtime = round(end_time - start_time,4)
     print("Program runtime:", runtime, "seconds")
-    #print(path)
+
+    if path is None:
+        path = []
+
+    if len(path) == 0:
+        solution = 0
+    else:
+        solution = 1
+
+    return path, pre_rot, runtime, solution, obstacle, object, rrt, X, x_q_init, x_q_goal, x_search_space, y_search_space, object, angle_loc_zero
+
+    #----------------------------------------------------------------------
+def save_data(path,pre_rot, ID, runtime, solution, data, object):
+    # OUTPUT - zapisanie logov
+    if solution == 0:
+        output_data = [ID,solution, runtime, 0]
+    else:
+        output_data = [ID,solution, runtime, abs(object[4] - pre_rot)]
+
+    print (round((ID/len(data))*100,2),"%")
+    print ("ID - ",ID,"   | sol =",solution)
+    # Append new data to the existing CSV file
+    with open(output_file, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([output_data[0]] + list(output_data[1:]))
+    #print("New data has been appended to", output_file)
+
+    with open(output_path_file, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        flattened_path = [round(item,2) for sublist in path for item in sublist]
+        flattened_path.insert(0, ID) # add ID
+        writer.writerow(flattened_path)
+    #print("Data saved to data.csv")
+
+    # STOP the time
+    glo_end_time = time.time()
+    print ("Global time of the proces",round((glo_end_time - glo_start_time)/60),"min ",(round(glo_end_time - glo_start_time,2)) % 60," sec")
 
 
     #----------------------------------------------------------------------
-    # # OUTPUT - zapisanie logov
-    # if path is None:
-    #     path = []
-    #
-    # if len(path) == 0:
-    #     solution = 0
-    #     output_data = [ID,solution, runtime, 0]
-    # else:
-    #     solution = 1
-    #     output_data = [ID,solution, runtime, abs(object_angle - pre_rot)]
-    #
-    # print (round((ID/len(data))*100,2),"%")
-    # print ("ID - ",ID,"   | sol =",solution)
-    # # Append new data to the existing CSV file
-    # with open(output_file, 'a', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     writer.writerow([output_data[0]] + list(output_data[1:]))
-    # #print("New data has been appended to", output_file)
-    #
-    # with open(output_path_file, 'a', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     flattened_path = [round(item,2) for sublist in path for item in sublist]
-    #     flattened_path.insert(0, ID) # add ID
-    #     writer.writerow(flattened_path)
-    # #print("Data saved to data.csv")
-    #
-    # # STOP the time
-    # glo_end_time = time.time()
-    # print ("Global time of the proces",round((glo_end_time - glo_start_time)/60),"min ",(round(glo_end_time - glo_start_time,2)) % 60," sec")
-    #
-    # if solution == 0: continue
-
-    #----------------------------------------------------------------------
+def path_visualize(path, pre_rot, object, obstacle, x_search_space, y_search_space, angle_loc_zero):
     # PLOT in OpenCV
     # Create a white image
-    img = np.full((y[1]-y[0], x[1]-x[0], 3), 255, dtype=np.uint8)
+    img = np.full((y_search_space, x_search_space, 3), 255, dtype=np.uint8)
 
     # prekazka
     rect_points = convert_rectangle(obstacle)
@@ -146,6 +174,7 @@ for input in data:
 
     img2 = np.copy(img)
     # prerotation of object
+    object_angle = object[4]
     diff = abs(object_angle-pre_rot)
     rot = 0
     while rot < diff:
@@ -156,7 +185,7 @@ for input in data:
         else: angle = 360 - (pos_xy[2] - angle_loc_zero + object_angle - rot)
         rot = rot+2
         obstacle1 = RotatedRect(obstacle[0], obstacle[1], obstacle[2], obstacle[3], obstacle[4])
-        [rotated_pts, intersection] = object_visualize(center, object_width, object_height, angle, obstacle1)
+        [rotated_pts, intersection] = object_visualize(center, object[2], object[3], angle, obstacle1)
         # Draw a rectangle
         cv.polylines(img, [rotated_pts], isClosed=True, color=(255, 0, 100), thickness=2)
         cv.polylines(img2, [rotated_pts], isClosed=True, color=(0, 0, 0), thickness=1)
@@ -187,7 +216,7 @@ for input in data:
         center = (pos_xy[0], pos_xy[1])
         angle = 360-(pos_xy[2]-angle_loc_zero+object_angle)
         obstacle1 = RotatedRect(obstacle[0], obstacle[1], obstacle[2], obstacle[3], obstacle[4])
-        [rotated_pts, intersection] = object_visualize(center,object_width, object_height, angle, obstacle1)
+        [rotated_pts, intersection] = object_visualize(center,object[2], object[3], angle, obstacle1)
         # Draw a rectangle
         cv.polylines(img, [rotated_pts], isClosed=True, color=(255, 0, 100), thickness=2)
         cv.polylines(img2, [rotated_pts], isClosed=True, color=(0, 0, 0), thickness=1)
@@ -212,30 +241,35 @@ for input in data:
         cv.waitKey()
 
         # reset picture
-        img = np.full((y[1]-y[0], x[1]-x[0], 3), 255, dtype=np.uint8)
+        img = np.full((y_search_space, x_search_space, 3), 255, dtype=np.uint8)
         rect_points = convert_rectangle(obstacle)
         rect_color = (200, 255, 0)
         cv.rectangle(img, (rect_points[0], rect_points[1]), (rect_points[2], rect_points[3]), rect_color, thickness=-1)
 
         # keeping tracks
         img = np.copy(img2)
+
+    return frames
     #------------------------------------------------------------------------------------------------------------------
 
-    ##path in q1,q2 rotations of robot arm joints
-    # print (path)
-    # path_q= []
-    # for pos in path:
-    #     local = glo2loc(pos)
-    #     pos_q = IK(local)
-    #     glob_pos_q = q_glob2q_robot(pos_q)
-    #     path_q.append(glob_pos_q)
+def save_gif(frames):
+    #Save GIF
+    with imageio.get_writer(gif_file,mode="I") as writer:
+        for frame in frames:
+            print("Adding frame to GIF file")
+            rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
+            writer.append_data(rgb_frame)
 
-    # print ("Path in Q")
-    # print (path_q)
 
-      # Save GIF
-    # with imageio.get_writer("RRT_Q.gif",mode="I") as writer:
-    #     for frame in frames:
-    #         print("Adding frame to GIF file")
-    #         rgb_frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    #         writer.append_data(rgb_frame)
+def plot_SearchSpace(path, X, x_init, x_goal, rrt):
+    plot = Plot("rrt_2d")
+    plot.plot_tree(X, rrt.trees)
+    if path is not None:
+        plot.plot_path(X, path)
+    #plot.plot_obstacles(X, Obstacles)
+    plot.plot_start(X, x_init)
+    plot.plot_goal(X, x_goal)
+    plot.draw(auto_open=True)
+
+# main program
+main()

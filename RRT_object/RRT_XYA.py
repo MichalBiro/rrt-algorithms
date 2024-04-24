@@ -15,17 +15,20 @@ from Object_visualization import RotatedRect, object_visualize,convert_rectangle
 
 
 # create empty file for outputs
-output_file = "data_files/3DOF_output_data3-TEST.csv"
-output_path_file = 'data_files/3DOF_output_data_path3-TEST.csv'
+output_file = "data_files/XYA_output_data2.csv"
+output_path_file = 'data_files/XYA_output_data_path2.csv'
 gif_file = "Test.gif"
+# Record the start time
+glo_start_time = time.time()
+
 def main():
 
-    files_declaration()
+    #files_declaration()
     data = input_data_load()
 
     ID = 0  # for saving data
     for input in data:
-        # input = data[10439]
+        #input = data[5]
         ID = ID + 1
         [path,runtime,solution,obstacle,object,rrt,Obstacles,X, x_init, x_goal, x_search_space, y_search_space] = path_finding_algorithm(input)
 
@@ -33,7 +36,7 @@ def main():
 
         if solution == 0: continue
 
-        frames = path_visualize(path, object, obstacle,x_search_space, y_search_space)
+        #frames = path_visualize(path, object, obstacle,x_search_space, y_search_space)
         #save_gif(frames)
         #plot_SearchSpace(path, Obstacles, X, x_init, x_goal, rrt)
 
@@ -45,8 +48,6 @@ def files_declaration():
     with open(output_path_file, 'w', newline='') as csvfile:
         pass
 
-# Record the start time
-glo_start_time = time.time()
 
 def input_data_load():
     # Load input data
@@ -89,8 +90,12 @@ def path_finding_algorithm(input):
     object = (object_center[0], object_center[1], object_width, object_height, object_angle)
 
     # obstacles for Searchspace
-    x_offset = object_width
-    y_offset = object_height
+    if object_width <= object_height:
+        x_offset = object_width
+        y_offset = object_height
+    else:
+        x_offset = object_height
+        y_offset = object_width
     Obstacles = np.array([(460 - x_offset/2, 0, 0, 590 + x_offset/2, 230 + x_offset/2, angle),
                           (0, 0, 0, x_offset/2, y_search_space, angle),
                           (x_search_space - x_offset/2, 0, 0, x_search_space, y_search_space, angle),
@@ -201,17 +206,6 @@ def path_visualize(path,object, obstacle, x_search_space, y_search_space):
 
     return frames
 
-    ##path in q1,q2 rotations of robot arm joints
-    # print (path)
-    # path_q= []
-    # for pos in path:
-    #     local = glo2loc(pos)
-    #     pos_q = IK(local)
-    #     glob_pos_q = q_glob2q_robot(pos_q)
-    #     path_q.append(glob_pos_q)
-
-    # print ("Path in Q")
-    # print (path_q)
 
 def save_gif(frames):
     #Save GIF

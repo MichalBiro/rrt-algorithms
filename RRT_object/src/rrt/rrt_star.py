@@ -5,6 +5,8 @@ from operator import itemgetter
 from src.rrt.heuristics import cost_to_go
 from src.rrt.heuristics import segment_cost, path_cost
 from src.rrt.rrt import RRT
+import time
+
 
 
 class RRTStar(RRT):
@@ -88,6 +90,10 @@ class RRTStar(RRT):
         http://roboticsproceedings.org/rss06/p34.pdf
         :return: set of Vertices; Edges in form: vertex: [neighbor_1, neighbor_2, ...]
         """
+        # Record the start time
+        start_time = time.time()
+        min_time = 20
+
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
 
@@ -100,6 +106,15 @@ class RRTStar(RRT):
             for q in self.Q:  # iterate over different edge lengths
                 for i in range(q[1]):  # iterate over number of edges of given length to add
                     x_new, x_nearest = self.new_and_near(0, q)
+
+                    # Calculate the runtime
+                    end_time = time.time()
+                    proces_time = round(end_time - start_time, 4)
+                    # stop program
+                    if proces_time > min_time:
+                        print("Time exceeded ", min_time, " second!")
+                        return []
+
                     if x_new is None:
                         continue
 

@@ -29,14 +29,14 @@ class RRT_Q(RRTBase_Q):
         """
         # Record the start time
         start_time = time.time()
-        min_time = 30
+        min_time = 17
 
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
 
         solution = self.check_solution()
         if solution[0]:
-            return solution[1]
+            return solution[1],self.Obstacles
 
 
         while True:

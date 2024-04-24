@@ -5,7 +5,7 @@
 import csv
 
 # Load output data
-file_path = "data_files/3DOF_Q_output_data.csv" # Define the file name
+file_path = "data_files/3DOF_output_data.csv" # Define the file name
 output_data = []
 with open(file_path, 'r', newline='') as csvfile:
     reader = csv.reader(csvfile)
@@ -47,11 +47,12 @@ for i,r_output in enumerate(output_data[:]):
     h = row[4]  # 4th position (index 3)
     sol = int(r_output[1])
     time = r_output[2]
-    print(i)
+    #print(i)
 
     # Append the values to the list
     object_size_data.append((w, h,sol))
-    if time < 30: global_time += time
+    if time < 5: global_time += time
+    else: global_time += 5
 
 result=[]
 global_success = 0
@@ -73,7 +74,7 @@ print("Number of successful cases: ",global_success,"/",all_cases)
 print("Success rate in all cases: ",(global_success/all_cases)*100)
 print("Average time for finding path: ", round(global_time/all_cases,2))
 # Define the file name
-file_path = "data_files/result_test.csv"
+file_path = "data_files/result_XYA.csv"
 
 # Write the array to the CSV file
 with open(file_path, 'w', newline='') as csvfile:

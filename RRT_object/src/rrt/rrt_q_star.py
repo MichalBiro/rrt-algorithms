@@ -5,6 +5,7 @@ from operator import itemgetter
 from src.rrt.heuristics import cost_to_go
 from src.rrt.heuristics import segment_cost, path_cost
 from src.rrt.rrt_q_base import RRTBase_Q
+import time
 
 
 class RRT_Q_Star(RRTBase_Q):
@@ -88,18 +89,38 @@ class RRT_Q_Star(RRTBase_Q):
         http://roboticsproceedings.org/rss06/p34.pdf
         :return: set of Vertices; Edges in form: vertex: [neighbor_1, neighbor_2, ...]
         """
+        # Record the start time
+        start_time = time.time()
+        min_time = 30
+
+        final_pre_rot = self.object[4]
+        # Can find way - check
+        if self.diagonal(self.object[2], self.object[3]) > 370:  # if diagonal of the object id bigger than 370mm - solution may not be found // 370 - 2*185 - distance from obstacle to 2nd joint
+            final_pre_rot = self.pre_rot()
+            if final_pre_rot is None:
+                return [], []
+
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
 
         # check solution on 1 sample
         solution = self.check_solution()
         if solution[0]:
-            return solution[1]
+            return solution[1],final_pre_rot
 
         while True:
             for q in self.Q:  # iterate over different edge lengths
                 for i in range(q[1]):  # iterate over number of edges of given length to add
+
                     x_new, x_nearest = self.new_and_near(0, q)
+                    # Calculate the runtime
+                    end_time = time.time()
+                    proces_time = round(end_time - start_time, 4)
+                    # stop program
+                    if proces_time > min_time:
+                        print("Time exceeded ", min_time, " second!")
+                        return [], []
+
                     if x_new is None:
                         continue
 
@@ -115,4 +136,4 @@ class RRT_Q_Star(RRTBase_Q):
 
                     solution = self.check_solution()
                     if solution[0]:
-                        return solution[1]
+                        return solution[1],final_pre_rot

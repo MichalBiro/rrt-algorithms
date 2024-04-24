@@ -119,7 +119,7 @@ class RRTBase_Q(object):
             return True
         # out of bounds
         for points in rotated_pts:
-            if points[0] < self.XY_dimensions[0][0] or points[0] > self.XY_dimensions[0][1] or points[1] < self.XY_dimensions[1][0] or points[1] > self.XY_dimensions[1][1]:
+            if points[0] < 0 or points[0] > self.XY_dimensions[0] or points[1] < 0 or points[1] > self.XY_dimensions[1]:
                 #print("Out of searchspace !")
                 return True
 

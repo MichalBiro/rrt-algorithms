@@ -37,7 +37,7 @@ class RRTBase_Q(object):
         self.XY_dimensions = XY_dimensions
         self.trees = []  # list of all trees
         self.add_tree()  # add initial tree
-        self.Obstacles = [(0,0,0,1,1,1)]
+        self.Obstacles = []
         self.obstacle_size = 1
 
     def add_tree(self):

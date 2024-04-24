@@ -151,8 +151,8 @@ class RRTBase(object):
         :return: path if possible, None otherwise
         """
         if self.can_connect_to_goal(0):
-            print("Can connect to goal")
-            print("Samples taken:", self.samples_taken)
+            #print("Can connect to goal")
+            #print("Samples taken:", self.samples_taken)
             self.connect_to_goal(0)
             return self.reconstruct_path(0, self.x_init, self.x_goal)
         #print("Could not connect to goal")
