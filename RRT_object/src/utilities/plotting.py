@@ -16,11 +16,14 @@ class Plot(object):
         self.filename = "C:/Users/micha/Documents/Skola/FEI24/ZS/diplomovka/python/rrt-algorithms" + filename + ".html"
         self.data = []
         self.layout = {'title': 'Plot',
-                       'showlegend': False
+                       'showlegend': False,
                        }
 
+
         self.fig = {'data': self.data,
-                    'layout': self.layout}
+                    'layout': self.layout,
+                    }
+
 
     def plot_tree(self, X, trees):
         """
@@ -229,3 +232,31 @@ class Plot(object):
         Render the plot to a file
         """
         py.offline.plot(self.fig, filename=self.filename, auto_open=auto_open)
+
+
+    def plot(self,X,auto_open=True):
+        # Create a scatter plot
+        fig = go.Figure(data=self.data)
+
+        if X.dimensions == 2:
+            fig.update_layout(
+                title="Path in Searchspace hshsa",
+                scene=dict(
+                    xaxis_title='X [mm]', #[\u00b0]
+                    yaxis_title='Y [mm]'  #[\u00b0]
+                )
+            )
+        elif X.dimensions == 3:
+            # Update layout to add axis descriptions
+            fig.update_layout(
+                title="Path in Searchspace",
+                scene = dict(
+                    xaxis_title='X [mm]', #[\u00b0]
+                    yaxis_title='Y [mm]', #[\u00b0]
+                    zaxis_title='Z [\u00b0]'
+                )
+            )
+        else:  # can't plot in higher dimensions
+            print("Cannot plot in > 3 dimensions")
+        #fig.show()
+        py.offline.plot(fig, filename=self.filename, auto_open=auto_open)

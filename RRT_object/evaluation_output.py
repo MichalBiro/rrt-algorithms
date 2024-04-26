@@ -4,10 +4,13 @@
 # script for evaluating outputs from experiment - reading files 2DOF and 3DOF_output_data
 import csv
 
-# Load output data
-file_path = "data_files/3DOF_output_data.csv" # Define the file name
+# Define the file name
+result_file_path = "data_files/result_XYA.csv"
+data_file_path = "data_files/XYA_output_data.csv" # Define the file name
+
+
 output_data = []
-with open(file_path, 'r', newline='') as csvfile:
+with open(data_file_path, 'r', newline='') as csvfile:
     reader = csv.reader(csvfile)
     for row in reader:
         # Convert each element in the row from string to integer
@@ -51,8 +54,8 @@ for i,r_output in enumerate(output_data[:]):
 
     # Append the values to the list
     object_size_data.append((w, h,sol))
-    if time < 5: global_time += time
-    else: global_time += 5
+    # if time < 5: global_time += time
+    # else: global_time += 5
 
 result=[]
 global_success = 0
@@ -73,15 +76,14 @@ for w,h in object_size_list:
 print("Number of successful cases: ",global_success,"/",all_cases)
 print("Success rate in all cases: ",(global_success/all_cases)*100)
 print("Average time for finding path: ", round(global_time/all_cases,2))
-# Define the file name
-file_path = "data_files/result_XYA.csv"
+
 
 # Write the array to the CSV file
-with open(file_path, 'w', newline='') as csvfile:
+with open(result_file_path, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerows(result)
 
-print(f"Data has been written to {file_path}")
+print(f"Data has been written to {result_file_path}")
 
 # for i,r_input in enumerate(input_data):
 #     r_output = output_data[i]
