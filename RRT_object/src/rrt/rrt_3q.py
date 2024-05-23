@@ -29,7 +29,7 @@ class RRT_Q(RRTBase_Q):
         """
         # Record the start time
         start_time = time.time()
-        min_time = 17
+        min_time = 20
 
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)

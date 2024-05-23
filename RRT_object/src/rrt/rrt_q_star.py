@@ -67,7 +67,7 @@ class RRT_Q_Star(RRTBase_Q):
         """
         # check nearby vertices for total cost and connect shortest valid edge
         for c_near, x_near in L_near:
-            if c_near + cost_to_go(x_near, self.x_goal) < self.c_best and self.connect_to_point(tree, x_near, x_new):
+            if c_near + cost_to_go(x_near, self.x_goal) < self.c_best and self.connect_to_point(tree, x_near, x_new) and self.linear_sampling_collision_check(x_near,x_new) == False:
                 break
 
     def current_rewire_count(self, tree):
@@ -111,8 +111,8 @@ class RRT_Q_Star(RRTBase_Q):
         while True:
             for q in self.Q:  # iterate over different edge lengths
                 for i in range(q[1]):  # iterate over number of edges of given length to add
-
                     x_new, x_nearest = self.new_and_near(0, q)
+
                     # Calculate the runtime
                     end_time = time.time()
                     proces_time = round(end_time - start_time, 4)
@@ -133,6 +133,9 @@ class RRT_Q_Star(RRTBase_Q):
                     if x_new in self.trees[0].E:
                         # rewire tree
                         self.rewire(0, x_new, L_near)
+
+                    # # connect shortest valid edge
+                    # self.connect_to_point(0, x_nearest, x_new)
 
                     solution = self.check_solution()
                     if solution[0]:

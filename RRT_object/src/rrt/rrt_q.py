@@ -28,19 +28,20 @@ class RRT_Q(RRTBase_Q):
         """
         # Record the start time
         start_time = time.time()
-        min_time = 30
+        min_time = 20
 
         final_pre_rot = self.object[4]
         # Can find way - check
-        if self.diagonal(self.object[2],self.object[3]) > 370: # if diagonal of the object id bigger than 370mm - solution may not be found // 370 - 2*185 - distance from obstacle to 2nd joint
-            final_pre_rot = self.pre_rot()
-            if final_pre_rot is None:
-                return [],[]
+        # if self.diagonal(self.object[2],self.object[3]) > 370: # if diagonal of the object id bigger than 370mm - solution may not be found // 370 - 2*185 - distance from obstacle to 2nd joint
+        #     final_pre_rot = self.pre_rot()
+        #     if final_pre_rot is None:
+        #         return [], []
 
 
         self.add_vertex(0, self.x_init)
         self.add_edge(0, self.x_init, None)
 
+        # check solution on 1 sample
         solution = self.check_solution()
         if solution[0]:
             return solution[1],final_pre_rot

@@ -23,21 +23,21 @@ glo_start_time = time.time()
 
 def main():
 
-    files_declaration()
+    #files_declaration()
     data = input_data_load()
 
-    ID = 8500  # for saving data
+    ID = 0  # for saving data
     for input in data[ID:]:
         #input = data[5]
         ID = ID + 1
         [path, pre_rot, runtime, solution, obstacle, object, rrt, X, x_q_init, x_q_goal, x_search_space, y_search_space, object, angle_loc_zero] = path_finding_algorithm(input)
 
-        save_data(path, pre_rot, ID, runtime, solution, data, object)
+        #save_data(path, pre_rot, ID, runtime, solution, data, object)
 
         if solution == 0:
             continue
 
-        #frames = path_visualize(path, pre_rot, object, obstacle, x_search_space, y_search_space, angle_loc_zero)
+        frames = path_visualize(path, pre_rot, object, obstacle, x_search_space, y_search_space, angle_loc_zero)
         #save_gif(frames)
         #plot_SearchSpace(path, X, x_q_init, x_q_goal, rrt)
 

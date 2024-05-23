@@ -13,27 +13,27 @@ from src.robot_arm import IK,glo2loc,q_glob2q_robot
 from Object_visualization import RotatedRect, object_visualize,convert_rectangle, path_sampling
 
 # create empty file for outputs
-output_file = "data_files/XYA_star_output_data.csv"
-output_path_file = 'data_files/XYA_star_output_data_path.csv'
+output_file = "data_files2/XYA_star.csv"
+output_path_file = 'data_files2/XYA_star_path.csv'
 gif_file = "Test.gif"
 # Record the start time
 glo_start_time = time.time()
 def main():
 
-    files_declaration()
+    #files_declaration()
     data = input_data_load()
 
-    ID = 0 # for saving data
+    ID = 1 # for saving data
     for input in data[ID:]:
         #input = data[10439]
         ID = ID + 1
         [path,runtime,solution,obstacle,object,rrt,Obstacles,X, x_init, x_goal, x_search_space, y_search_space] = path_finding_algorithm(input)
 
-        save_data(path,ID,runtime,solution,data)
+        #save_data(path,ID,runtime,solution,data)
 
         if solution == 0: continue
 
-        #frames = path_visualize(path, object, obstacle,x_search_space, y_search_space)
+        frames = path_visualize(path, object, obstacle,x_search_space, y_search_space)
         #save_gif(frames)
         #plot_SearchSpace(path, Obstacles, X, x_init, x_goal, rrt)
 def files_declaration():
@@ -45,7 +45,7 @@ def files_declaration():
 
 def input_data_load():
     # Load input data
-    file_path = "data_files/input.csv"# Define the file name
+    file_path = "data_files2/input2.csv"# Define the file name
     data = []
     with open(file_path, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
@@ -91,17 +91,17 @@ def path_finding_algorithm(input):
     else:
         x_offset = object_height
         y_offset = object_width
-    Obstacles = np.array([(460-x_offset/2, 0, 0, 590+x_offset/2, 230+y_offset/2, angle),
-                          (0,0,0,x_offset/2,y_search_space,angle),
-                          (x_search_space-x_offset/2,0,0,x_search_space,y_search_space,angle),
-                          (x_offset/2,745-y_offset/2,0,x_search_space-x_offset/2,y_search_space,angle),
-                          (x_offset/2,0,0,460-x_offset/2,y_offset/2,angle),
-                          (590+x_offset/2,0,0,x_search_space-x_offset/2,y_offset/2,angle)
+    Obstacles = np.array([(460 - x_offset / 2, 0, 0, 590 + x_offset / 2, 230 + x_offset / 2, angle),
+                          (0, 0, 0, x_offset / 2, y_search_space, angle),
+                          (x_search_space - x_offset / 2, 0, 0, x_search_space, y_search_space, angle),
+                          (x_offset / 2, 745 - x_offset / 2, 0, x_search_space - x_offset / 2, y_search_space, angle),
+                          (x_offset / 2, 0, 0, 460 - x_offset / 2, y_offset / 2, angle),
+                          (590 + x_offset / 2, 0, 0, x_search_space - x_offset / 2, y_offset / 2, angle)
                           ])
 
     Q = np.array([(10,5)])  # length of tree edges
     r = 1  # length of smallest edge to check for intersection with obstacles
-    max_samples = 2000  # max number of samples to take before timing out
+    max_samples = 5000  # max number of samples to take before timing out
     rewire_count = 10  # optional, number of nearby branches to rewire
     prc = 0.1  # probability of checking for a connection to goal
 

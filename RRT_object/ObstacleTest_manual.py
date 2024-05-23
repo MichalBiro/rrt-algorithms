@@ -49,10 +49,11 @@ def redraw_image():
 
     # draw robot arm
     robot_joints = robot_visualization(pos_q)
-    color = (0, 0, 0)  # black color
+    color1 = (0, 0, 0)  # black color
+    color2 = (0, 0, 0)  # black color
     thickness = 3
-    cv.line(img, robot_joints[0], robot_joints[1], color, thickness)
-    cv.line(img, robot_joints[1], robot_joints[2], color, thickness)
+    cv.line(img, robot_joints[0], robot_joints[1], color1, thickness)
+    cv.line(img, robot_joints[1], robot_joints[2], color2, thickness)
     if len(intersection) != 0:
         print("Collision !")
 

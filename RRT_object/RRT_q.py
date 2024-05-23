@@ -15,8 +15,8 @@ from src.robot_arm import FK,loc2glo,glo2loc,IK
 from Object_visualization_q import RotatedRect, object_visualize, convert_rectangle, path_sampling, robot_visualization
 
 # create empty file for outputs
-output_file = "data_files/2DOF_output_data3-TEST.csv"
-output_path_file = 'data_files/2DOF_output_data_path3-TEST.csv'
+output_file = "data_files2/2QnotRot.csv" # QnotRot.csv"
+output_path_file = 'data_files2/2QnotRot_path.csv' # 2QnotRot_path.csv'
 gif_file = "Test.gif"
 # Record the start time
 glo_start_time = time.time()
@@ -26,9 +26,9 @@ def main():
     #files_declaration()
     data = input_data_load()
 
-    ID = 0  # for saving data
-    for input in data:
-        input = data[1000]
+    ID = 7237  # for saving data
+    for input in data[ID:]:
+        #input = data[1000]
         ID = ID + 1
         [path, pre_rot, runtime, solution, obstacle, object, rrt, X, x_q_init, x_q_goal, x_search_space, y_search_space, object, angle_loc_zero] = path_finding_algorithm(input)
 
@@ -51,7 +51,7 @@ def files_declaration():
 
 def input_data_load():
     # Load input data
-    file_path = "data_files/input.csv"# Define the file name
+    file_path = "data_files2/input2.csv"# Define the file name
     data = []
     with open(file_path, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)

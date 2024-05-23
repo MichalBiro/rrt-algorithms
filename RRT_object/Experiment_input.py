@@ -41,29 +41,13 @@ def collision_check(center,size,angle):
 
     return False
 
-# pos = [850,600,0]
-# [q_up,q_down] = IK(pos)
-# q_up = [math.degrees(q_up[0]),math.degrees(q_up[1])]
-# q_down = [math.degrees(q_down[0]),math.degrees(q_down[1])]
-# print(q_up)
-# print(q_down)
-# pos = FK(q_down)
-# pos = loc2glo(pos)
-# print(pos)
-
-# # Define your 2D array
-# inputs = [
-#     [650, 200, 100, 40, 180],
-#     [800, 300, 100, 200, 120],
-#     [750, 500, 150, 150, 200],
-#     [800, 600, 50, 200, 60]
-# ]
-
+# Define the file name
+file_name = "input-diagonal.csv"
 
 inputs = []
 ID = 0
 x_size_range = [100,400]
-y_size_range = [200,600]
+y_size_range = [100,400]
 increment = 20
 
 x_size = x_size_range[0]
@@ -76,13 +60,13 @@ while x_size <= x_size_range[1]:
 
         # checks and eliminate unwanted cases
         diagonal = math.sqrt(x_size ** 2 + y_size ** 2)
-        if x_size > y_size or diagonal < 370:
+        if diagonal > 370: #or x_size > y_size
             y_size += increment
             continue
 
         object_size = [x_size,y_size]
         angle_base = 180
-        rot_sampling = 20
+        rot_sampling = 6
         box_zero = [590,0]
         box_size = [460,745]
         box_offset = 50
@@ -112,8 +96,7 @@ while x_size <= x_size_range[1]:
 
 
 print(inputs)
-# Define the file name
-file_name = "input2.csv"
+
 
 # Write the array to the CSV file
 with open(file_name, 'w', newline='') as csvfile:

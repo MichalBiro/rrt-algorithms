@@ -15,8 +15,8 @@ from Object_visualization import RotatedRect, object_visualize,convert_rectangle
 
 
 # create empty file for outputs
-output_file = "data_files/XYA_output_data2.csv"
-output_path_file = 'data_files/XYA_output_data_path2.csv'
+output_file = "data_files2/long.csv"
+output_path_file = 'data_files2/long_path.csv'
 gif_file = "Test.gif"
 # Record the start time
 glo_start_time = time.time()
@@ -26,8 +26,8 @@ def main():
     #files_declaration()
     data = input_data_load()
 
-    ID = 0  # for saving data
-    for input in data:
+    ID = 1 # for saving data
+    for input in data[:ID]:
         #input = data[5]
         ID = ID + 1
         [path,runtime,solution,obstacle,object,rrt,Obstacles,X, x_init, x_goal, x_search_space, y_search_space] = path_finding_algorithm(input)
@@ -36,7 +36,7 @@ def main():
 
         if solution == 0: continue
 
-        #frames = path_visualize(path, object, obstacle,x_search_space, y_search_space)
+        frames = path_visualize(path, object, obstacle,x_search_space, y_search_space)
         #save_gif(frames)
         #plot_SearchSpace(path, Obstacles, X, x_init, x_goal, rrt)
 
@@ -51,7 +51,7 @@ def files_declaration():
 
 def input_data_load():
     # Load input data
-    file_path = "data_files/input.csv"# Define the file name
+    file_path = "data_files2/input2.csv"# Define the file name
     data = []
     with open(file_path, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
@@ -92,10 +92,10 @@ def path_finding_algorithm(input):
     # obstacles for Searchspace
     if object_width <= object_height:
         x_offset = object_width
-        y_offset = object_height
+        y_offset = object_width
     else:
         x_offset = object_height
-        y_offset = object_width
+        y_offset = object_height
     Obstacles = np.array([(460 - x_offset/2, 0, 0, 590 + x_offset/2, 230 + x_offset/2, angle),
                           (0, 0, 0, x_offset/2, y_search_space, angle),
                           (x_search_space - x_offset/2, 0, 0, x_search_space, y_search_space, angle),
@@ -106,7 +106,7 @@ def path_finding_algorithm(input):
 
     Q = np.array([(10, 5)])  # length of tree edges
     r = 1  # length of smallest edge to check for intersection with obstacles
-    max_samples = 2000  # max number of samples to take before timing out
+    max_samples = 5000  # max number of samples to take before timing out
     prc = 0.1          # probability of checking for a connection to goal
 
     # create search space
@@ -223,7 +223,8 @@ def plot_SearchSpace(path, Obstacles, X, x_init, x_goal, rrt):
     plot.plot_obstacles(X, Obstacles)
     plot.plot_start(X, x_init)
     plot.plot_goal(X, x_goal)
-    plot.draw(auto_open=True)
+    #plot.draw(auto_open=True)
+    plot.plot(X,auto_open=True)
 
 # main program
 main()

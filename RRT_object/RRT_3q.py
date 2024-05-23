@@ -15,8 +15,8 @@ from src.robot_arm import FK,loc2glo,IK
 from Object_visualization_3q import RotatedRect, object_visualize, convert_rectangle, path_sampling, robot_visualization
 
 # create empty file for outputs
-output_file = "data_files/3DOF_Q_output_data-new.csv"
-output_path_file='data_files/3DOF_Q_output_data_path-new.csv'
+output_file = "data_files2/3Q2.csv"
+output_path_file='data_files2/3Q_path2.csv'
 gif_file = "Test.gif"
 # Record the start time
 glo_start_time = time.time()
@@ -26,7 +26,7 @@ def main():
     #files_declaration()
     data = input_data_load()
 
-    ID = 10735  # for saving data
+    ID = 0  # for saving data
     for input in data[ID:]:
         #input = data[8170]
         print(input)
@@ -49,7 +49,7 @@ def files_declaration():
 
 def input_data_load():
     # Load input data
-    file_path = "data_files/input.csv"# Define the file name
+    file_path = "data_files2/input2.csv"# Define the file name
     data = []
     with open(file_path, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
@@ -101,7 +101,7 @@ def path_finding_algorithm(input):
     #     q3_rot = x_q_init[2] - (360-q3_rot)
     x_q_goal = (x_q12_goal[0],x_q12_goal[1],q3_rot)
 
-    Q = np.array([(8, 5, 3, 1)])  # length of tree edges
+    Q = np.array([(4, 3, 1)])  # length of tree edges
     r = 1  # length of the smallest edge to check for intersection with obstacles
     max_samples = 2000  # max number of samples to take before timing out
     prc = 0.1  # probability of checking for a connection to goal

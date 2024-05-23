@@ -8,7 +8,7 @@ import csv
 import numpy as np
 
 # Load output data
-file_path = "data_files/result_test.csv" # Define the file name
+file_path = "data_files2/result_2Q_diag.csv" # Define the file name
 result_data = []
 with open(file_path, 'r', newline='') as csvfile:
     reader = csv.reader(csvfile)
@@ -23,18 +23,20 @@ print (result_data)
 width = []
 height = []
 percentage = []
+time = []
 for row in result_data:
     # Extract the values at the 3rd and 4th positions
     w = row[0]
     h = row[1]
     p = row[5]
+    t = row[6]
 
 
     # Append the values to the list
     width.append(int(w))
     height.append(int(h))
     percentage.append(p)
-
+    time.append(t)
 
 print(width)
 print(height)
@@ -42,16 +44,32 @@ print(percentage)
 
 # 2D PLOT
 # Create the plot
-plt.figure(figsize=(8, 6))
-scatter = plt.scatter(width, height, c=percentage, cmap='RdYlGn', vmin=0, vmax=100, marker='s',s=250)
+plt.figure(figsize=(9, 7))
+scatter = plt.scatter(width, height, c=percentage, cmap='RdYlGn', vmin=0, vmax=100, marker='s',s=200)
 
 # Add colorbar
-plt.colorbar(scatter, label='success rate [%]')
+plt.colorbar(scatter, label='úspešnost [%]')
 
 # Set labels and title
-plt.xlabel('Width')
-plt.ylabel('Height')
-plt.title('3DOF_xya')
+plt.xlabel('Šírka [mm]')
+plt.ylabel('Výška [mm]')
+#plt.title('3DOF_q')
+
+# Show the plot
+plt.show()
+
+# ----------- plot for time --------------
+# Create the plot
+plt.figure(figsize=(9, 7))
+scatter = plt.scatter(width, height, c=time, cmap='RdYlGn_r', vmin=0, vmax=20, marker='s',s=200)
+
+# Add colorbar
+plt.colorbar(scatter, label='čas [s]')
+
+# Set labels and title
+plt.xlabel('šírka [mm]')
+plt.ylabel('výška [mm]')
+#plt.title('3DOF_q - time')
 
 # Show the plot
 plt.show()
@@ -81,3 +99,4 @@ plt.show()
 #
 # # Show the plot
 # plt.show()
+
